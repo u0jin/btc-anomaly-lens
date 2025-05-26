@@ -25,9 +25,9 @@ def main():
         Python, SQL, REST APIs, WebRTC, Git, Linux<br>
         Blockchain analysis, Static code analysis, Web security<br><br>
 
-        📄 <a href='https://github.com/u0jin/btc-anomaly-lens/raw/main/docs/youjin_resume.pdf' target='_blank'>View Resume (PDF)</a><br>
+        📄 <a href='https://github.com/u0jin/btc-anomaly-lens/raw/main/docs/ You Jin Kim — Resume.pdf' target='_blank'>View Resume (PDF)</a><br>
         🔗 <a href='https://github.com/u0jin' target='_blank'>GitHub Profile</a><br>
-        📧 youjin.kim@korea.ac.kr
+        📧 yujin5836@gmail.com
         </div>
         """, unsafe_allow_html=True)
 
