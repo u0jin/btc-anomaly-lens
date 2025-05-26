@@ -8,20 +8,30 @@ def main():
     lang = st.sidebar.selectbox("Language / 언어", ["English", "한국어"])
     t = get_text(lang)
 
-    # Sidebar: About the Creator
+    # Sidebar: About the Creator (세련된 구성)
     with st.sidebar.expander("🧑‍💻 About the Creator", expanded=False):
         st.markdown("""
-        <div style='line-height: 1.6; font-size: 14px;'>
+        <div style='line-height: 1.7; font-size: 14px;'>
         <strong>You Jin Kim</strong><br>
-        Master's in Information Security, Korea University<br>
-        Focus: Blockchain Anomaly Detection, Threat Scoring, Data Visualization<br><br>
-        🔗 <a href='https://github.com/u0jin' target='_blank'>GitHub</a><br>
-        📄 <a href='https://github.com/u0jin/btc-anomaly-lens/raw/main/docs/youjin_resume.pdf' target='_blank'>Resume</a><br>
-        📫 youjin.kim@korea.ac.kr
+        M.S. in Information Security, Korea University<br>
+        Cybersecurity Researcher specializing in blockchain anomaly detection and threat intelligence.<br><br>
+
+        🧪 <strong>Research Focus:</strong><br>
+        - Bitcoin crime wallet clustering<br>
+        - Time-series & topological modeling<br>
+        - Real-time risk scoring engine<br><br>
+
+        🛠 <strong>Technical Stack:</strong><br>
+        Python, SQL, REST APIs, WebRTC, Git, Linux<br>
+        Blockchain analysis, Static code analysis, Web security<br><br>
+
+        📄 <a href='https://github.com/u0jin/btc-anomaly-lens/raw/main/docs/youjin_resume.pdf' target='_blank'>View Resume (PDF)</a><br>
+        🔗 <a href='https://github.com/u0jin' target='_blank'>GitHub Profile</a><br>
+        📧 youjin.kim@korea.ac.kr
         </div>
         """, unsafe_allow_html=True)
 
-    # 상단 브랜드 소개
+    # 상단 소개 영역
     st.markdown("""
     <div style='text-align: center; padding: 10px 0;'>
         <h2 style='color: #08BDBD;'>BTC Anomaly Lens</h2>
