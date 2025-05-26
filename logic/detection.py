@@ -1,19 +1,15 @@
 from datetime import datetime
+from collections import Counter
 import numpy as np
 
+# 1. 거래 간격 이상 탐지 (60초 미만)
 def interval_anomaly_score(tx_list):
-    '''
-    Calculate risk score based on transaction time intervals.
-    tx_list: list of dicts with a 'timestamp' key (ISO format)
-    '''
     if len(tx_list) < 2:
         return 0, []
-
     try:
         timestamps = [datetime.fromisoformat(tx['timestamp']) for tx in tx_list]
     except Exception:
         return 0, []
-
     intervals = [
         (t2 - t1).total_seconds()
         for t1, t2 in zip(timestamps[:-1], timestamps[1:])
@@ -22,7 +18,7 @@ def interval_anomaly_score(tx_list):
     score = min(25, len(short_intervals) * 5)
     return score, short_intervals
 
-
+# 2. 이상 금액 탐지 (IQR 이상)
 def amount_anomaly_score(tx_list):
     values = [tx['amount'] for tx in tx_list if 'amount' in tx]
     if len(values) < 2:
@@ -33,3 +29,36 @@ def amount_anomaly_score(tx_list):
     outliers = [v for v in values if v > threshold]
     score = min(25, len(outliers) * 5)
     return score, outliers
+
+# 3. 동일 수신 주소 반복 탐지
+def repeated_address_score(tx_list):
+    targets = [tx.get('to') for tx in tx_list if tx.get('to')]
+    counter = Counter(targets)
+    flagged = [addr for addr, count in counter.items() if count >= 3]
+    score = min(25, len(flagged) * 5)
+    return score, flagged
+
+# 4. 시계열 상 이상 간격 탐지
+def time_gap_anomaly_score(tx_list):
+    if len(tx_list) < 2:
+        return 0, []
+    try:
+        timestamps = [datetime.fromisoformat(tx['timestamp']) for tx in tx_list]
+    except Exception:
+        return 0, []
+    gaps = [
+        (t2 - t1).total_seconds()
+        for t1, t2 in zip(timestamps[:-1], timestamps[1:])
+    ]
+    abnormal = [g for g in gaps if g < 10 or g > 3600]
+    score = min(15, len(abnormal) * 5)
+    return score, abnormal
+
+# 5. 블랙리스트 주소 탐지
+def blacklist_score(tx_list):
+    # 예시용: 블랙리스트 주소 하드코딩 (실제 구현 시 외부 목록 연동)
+    blacklist = {"1Kf3aLmh4...", "1Zzblock...", "1NK..."}  # 예시 주소
+    involved = [tx.get('to') for tx in tx_list if tx.get('to') in blacklist]
+    if involved:
+        return True, 10  # 또는 100점 (직접 사용 시)
+    return False, 0
