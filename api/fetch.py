@@ -24,23 +24,30 @@ def fetch_from_mempool(address):
 
 # ✅ 전체 mempool 요약
 def fetch_mempool_summary():
+    """
+    Fetch global mempool summary from mempool.space
+    Returns dict with 'count', 'vsize', 'total_fee'
+    """
     try:
         r = requests.get(f"{MEMPOOL_BASE}/mempool")
         if r.status_code == 200:
-            return r.json()  # {"count": ..., "vsize": ..., "total_fee": ...}
-        return {"error": f"Status {r.status_code}"}
-    except Exception as e:
-        return {"error": str(e)}
-
+            return r.json()
+        return {}
+    except Exception:
+        return {}
 # ✅ 수수료 히스토그램
 def fetch_fee_histogram():
+    """
+    Fetch mempool fee histogram (used to estimate block composition by fee rate)
+    Returns a list of dicts with blockSize, feeRange, count
+    """
     try:
         r = requests.get(f"{MEMPOOL_BASE}/v1/fees/mempool-blocks")
         if r.status_code == 200:
-            return r.json()  # [{"blockSize": ..., "feeRange": [...], "count": ...}, ...]
-        return [{"error": f"Status {r.status_code}"}]
-    except Exception as e:
-        return [{"error": str(e)}]
+            return r.json()
+        return []
+    except Exception:
+        return []
 
 # ✅ 외부에서 호출하는 통합 함수
 def get_transaction_data(address, mode="free"):

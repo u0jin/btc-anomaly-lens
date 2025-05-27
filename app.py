@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+import plotly.express as px
 from ui.layout import show_layout, render_interval_chart
 from ui.language import get_text
 from logic.detection import (
@@ -8,6 +10,7 @@ from logic.detection import (
     time_gap_anomaly_score,
     blacklist_score
 )
+from api.fetch import fetch_fee_histogram
 
 def main():
     st.set_page_config(page_title="BTC Anomaly Lens", layout="wide")
@@ -39,7 +42,7 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
-    # 🪧 상단 제목
+    # 상단 제목
     st.markdown("""
     <div style='text-align: center; padding: 10px 0;'>
         <h2 style='color: #08BDBD;'>BTC Anomaly Lens</h2>
@@ -47,7 +50,7 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # 🧪 사용자 주소 입력
+    # 주소 입력
     st.subheader("Live Transaction Analysis")
     address = st.text_input("Enter a Bitcoin address for live analysis")
 
@@ -79,7 +82,7 @@ def main():
                 # 총합 점수 계산
                 total_score = interval_score + amount_score + address_score + time_score + blacklist_score_val
 
-                # 🔍 결과 출력
+                # 결과 출력
                 show_layout(
                     lang, total_score,
                     interval_score, short_intervals,
@@ -89,7 +92,7 @@ def main():
                     blacklist_score_val, blacklist_flag
                 )
 
-                # API 요청 정보
+                # API 정보
                 with st.expander("🔍 API Access Info"):
                     source = "mempool.space" if premium_mode else "BlockCypher.com"
                     endpoint = (
@@ -99,7 +102,7 @@ def main():
                     st.markdown(f"**Access Mode:** {'Premium' if premium_mode else 'Free'} (Live API)\n\n**Source:** {source}")
                     st.code(endpoint, language="http")
 
-    # 🔒 프리미엄 기능 안내
+    # 📊 프리미엄 기능 설명 + 추가 시각화
     if premium_mode:
         st.markdown("### 📊 Premium Features")
         st.info("Advanced clustering visualization and darknet address correlation are under development.")
@@ -109,6 +112,20 @@ def main():
         - Dynamic fee risk estimation (Coming Soon)
         """, unsafe_allow_html=True)
 
+        # 💸 수수료 분포 시각화
+        with st.expander("💸 Fee Rate Distribution (mempool.space)", expanded=False):
+            fee_data = fetch_fee_histogram()
+            if fee_data:
+                df_fee = pd.DataFrame(fee_data)
+                df_fee["fee_label"] = df_fee["feeRange"].apply(lambda r: f"{r[0]}-{r[1]} sat/vB")
+
+                y_col = "nTx" if "nTx" in df_fee.columns else "totalFees"
+                fig_fee = px.bar(df_fee, x="fee_label", y=y_col, title="💸 Fee Rate Distribution in Mempool")
+                st.plotly_chart(fig_fee, use_container_width=True)
+            else:
+                st.warning("❌ Failed to fetch mempool fee histogram.")
+
+        # PDF Export
         if st.button("📝 Export Analysis Report (PDF)"):
             st.warning("PDF export is a premium-only feature. Subscribe or enable enterprise mode to access this.")
     else:
