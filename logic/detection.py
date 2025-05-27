@@ -1,6 +1,8 @@
 from datetime import datetime
 from collections import Counter
 import numpy as np
+import os
+import streamlit as st  # 경고 메시지 출력용
 
 # 1. 거래 간격 이상 탐지 (60초 미만)
 def interval_anomaly_score(tx_list):
@@ -54,11 +56,32 @@ def time_gap_anomaly_score(tx_list):
     score = min(15, len(abnormal) * 5)
     return score, abnormal
 
-# 5. 블랙리스트 주소 탐지
+# 5. 블랙리스트 로딩 및 탐지
+def load_blacklist():
+    try:
+        # 현재 이 파일 기준 상대 경로로 /data/blacklist.txt 접근
+        current_dir = os.path.dirname(__file__)
+        blacklist_path = os.path.join(current_dir, "..", "data", "blacklist.txt")
+
+        # 디버그: 경로 출력
+        if not os.path.exists(blacklist_path):
+            st.error(f"❌ blacklist.txt not found at: {blacklist_path}")
+            return set()
+
+        with open(blacklist_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            result = set(line.strip() for line in lines if line.strip())
+
+            # 디버그: 결과 확인
+            st.code(f"✅ 블랙리스트 주소 개수: {len(result)}")
+            return result
+    except Exception as e:
+        st.warning(f"⚠️ 블랙리스트 파일 오류: {e}")
+        return set()
+
 def blacklist_score(tx_list):
-    # 예시용: 블랙리스트 주소 하드코딩 (실제 구현 시 외부 목록 연동)
-    blacklist = {"1Kf3aLmh4...", "1Zzblock...", "1NK..."}  # 예시 주소
+    blacklist = load_blacklist()
     involved = [tx.get('to') for tx in tx_list if tx.get('to') in blacklist]
     if involved:
-        return True, 10  # 또는 100점 (직접 사용 시)
+        return True, 100
     return False, 0

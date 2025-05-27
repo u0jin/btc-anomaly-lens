@@ -14,18 +14,44 @@ def show_layout(
 ):
     t = get_text(lang)
 
-    st.markdown(f"<h4>{t['total_score']}: <span style='color:#FF4B4B'>{total_score:.1f} / 100</span></h4>", unsafe_allow_html=True)
+    # 1️⃣ 시각용 점수: 최대 100점까지만 표시
+    display_score = min(total_score, 100)
+
+    # 2️⃣ 도넛 차트: 점수 구성 비율 시각화
+    with st.expander("📊 Risk Score Breakdown (Donut Chart)", expanded=False):
+        score_parts = {
+            "Interval": interval_score,
+            "Amount": amount_score,
+            "Address": address_score,
+            "TimeGap": time_score,
+            "Blacklist": blacklist_score_val
+        }
+        fig_donut = px.pie(
+            names=list(score_parts.keys()),
+            values=list(score_parts.values()),
+            hole=0.5,
+            title="Risk Score Composition"
+        )
+        st.plotly_chart(fig_donut, use_container_width=True)
+
+    # 3️⃣ 총점 표시 (100점 초과 시 제한)
+    st.markdown(f"<h4>{t['total_score']}: <span style='color:#FF4B4B'>{display_score:.1f} / 100</span></h4>", unsafe_allow_html=True)
+
+    if total_score > 100:
+        st.caption("⚠️ One or more critical anomalies detected. Total score capped at 100.")
+
+    t = get_text(lang)
 
     # 📊 레이더 차트
     with st.expander("📊 Radar Chart"):
         radar_data = {
             "항목": ["간격", "금액", "주소", "시계열", "블랙리스트"],
             "점수": [
-                interval_score,
-                amount_score,
-                address_score,
-                time_score,
-                blacklist_score_val
+                interval_score / 25 * 100,
+                amount_score / 25 * 100,
+                address_score / 25 * 100,
+                time_score / 15 * 100,
+                blacklist_score_val  # 이미 0 or 100
             ]
         }
         fig = go.Figure()
@@ -35,7 +61,10 @@ def show_layout(
             fill='toself',
             name='Risk Profile'
         ))
-        fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 25])), showlegend=False)
+        fig.update_layout(
+            polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+            showlegend=False
+        )
         st.plotly_chart(fig, use_container_width=True)
 
     # 공통 점수 출력 섹션
@@ -94,7 +123,7 @@ def show_layout(
         st.markdown(f"### {t['blacklist_title']}")
         with st.popover(t['view_logic']):
             st.markdown(t['blacklist_logic_md'], unsafe_allow_html=True)
-        st.markdown(f"**{t['score']}:** {blacklist_score_val:.1f} / 10")
+        st.markdown(f"**{t['score']}:** {blacklist_score_val:.1f} / 100")
         if blacklist_flag:
             st.error(t['blacklist_flagged'])
         else:
