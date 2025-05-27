@@ -10,7 +10,9 @@ from logic.detection import (
     time_gap_anomaly_score,
     blacklist_score
 )
-from api.fetch import fetch_fee_histogram
+from logic.graph import generate_transaction_network
+from api.fetch import get_transaction_data, fetch_fee_histogram
+from api.parser import parse_blockcypher_transactions, parse_mempool_transactions
 
 def main():
     st.set_page_config(page_title="BTC Anomaly Lens", layout="wide")
@@ -42,7 +44,7 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
-    # 상단 제목
+    # 🪧 상단 제목
     st.markdown("""
     <div style='text-align: center; padding: 10px 0;'>
         <h2 style='color: #08BDBD;'>BTC Anomaly Lens</h2>
@@ -50,14 +52,11 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # 주소 입력
+    # 🧪 주소 입력
     st.subheader("Live Transaction Analysis")
     address = st.text_input("Enter a Bitcoin address for live analysis")
 
     if st.button("Analyze Address"):
-        from api.fetch import get_transaction_data
-        from api.parser import parse_blockcypher_transactions, parse_mempool_transactions
-
         with st.spinner("Fetching and analyzing transactions..."):
             raw_data = get_transaction_data(address, mode="premium" if premium_mode else "free")
             tx_list = (
@@ -68,64 +67,66 @@ def main():
 
             if not tx_list:
                 st.error("No valid transactions found or address is invalid.")
-            else:
-                st.success("✅ Real blockchain data successfully retrieved via {}"
-                           .format("mempool.space" if premium_mode else "BlockCypher"))
+                return
 
-                # 점수 계산
-                interval_score, short_intervals = interval_anomaly_score(tx_list)
-                amount_score, outliers = amount_anomaly_score(tx_list)
-                address_score, flagged_addresses = repeated_address_score(tx_list)
-                time_score, abnormal_gaps = time_gap_anomaly_score(tx_list)
-                blacklist_flag, blacklist_score_val = blacklist_score(tx_list)
+            st.success(f"✅ Real blockchain data successfully retrieved via {'mempool.space' if premium_mode else 'BlockCypher'}")
 
-                # 총합 점수 계산
-                total_score = interval_score + amount_score + address_score + time_score + blacklist_score_val
+            # 점수 계산
+            interval_score, short_intervals = interval_anomaly_score(tx_list)
+            amount_score, outliers = amount_anomaly_score(tx_list)
+            address_score, flagged_addresses = repeated_address_score(tx_list)
+            time_score, abnormal_gaps = time_gap_anomaly_score(tx_list)
+            blacklist_flag, blacklist_score_val = blacklist_score(tx_list)
+            total_score = interval_score + amount_score + address_score + time_score + blacklist_score_val
 
-                # 결과 출력
-                show_layout(
-                    lang, total_score,
-                    interval_score, short_intervals,
-                    amount_score, outliers,
-                    address_score, flagged_addresses,
-                    time_score, abnormal_gaps,
-                    blacklist_score_val, blacklist_flag
+            # 🔍 결과 시각화 출력
+            show_layout(
+                lang, total_score,
+                interval_score, short_intervals,
+                amount_score, outliers,
+                address_score, flagged_addresses,
+                time_score, abnormal_gaps,
+                blacklist_score_val, blacklist_flag
+            )
+
+            # 🕸 네트워크 그래프 (프리미엄 전용)
+            if premium_mode:
+                encoded_img = generate_transaction_network(tx_list)
+                if encoded_img:
+                    st.markdown("### 🕸 Transaction Flow Network")
+                    st.image(f"data:image/png;base64,{encoded_img}", use_column_width=True)
+
+            # API 호출 정보
+            with st.expander("🔍 API Access Info"):
+                source = "mempool.space" if premium_mode else "BlockCypher.com"
+                endpoint = (
+                    f"GET /address/{address}/txs" if premium_mode
+                    else f"GET /addrs/{address}/full?token=****"
                 )
+                st.markdown(f"**Access Mode:** {'Premium' if premium_mode else 'Free'} (Live API)\n\n**Source:** {source}")
+                st.code(endpoint, language="http")
 
-                # API 정보
-                with st.expander("🔍 API Access Info"):
-                    source = "mempool.space" if premium_mode else "BlockCypher.com"
-                    endpoint = (
-                        f"GET /address/{address}/txs" if premium_mode
-                        else f"GET /addrs/{address}/full?token=****"
-                    )
-                    st.markdown(f"**Access Mode:** {'Premium' if premium_mode else 'Free'} (Live API)\n\n**Source:** {source}")
-                    st.code(endpoint, language="http")
-
-    # 📊 프리미엄 기능 설명 + 추가 시각화
+    # 📊 프리미엄 기능 안내 및 시각화
     if premium_mode:
         st.markdown("### 📊 Premium Features")
         st.info("Advanced clustering visualization and darknet address correlation are under development.")
         st.markdown("""
         - Real-time mempool anomaly map (Coming Soon)  
-        - Address graph network visualization (Coming Soon)  
+        - Address graph network visualization ✅  
         - Dynamic fee risk estimation (Coming Soon)
         """, unsafe_allow_html=True)
 
-        # 💸 수수료 분포 시각화
         with st.expander("💸 Fee Rate Distribution (mempool.space)", expanded=False):
             fee_data = fetch_fee_histogram()
             if fee_data:
                 df_fee = pd.DataFrame(fee_data)
                 df_fee["fee_label"] = df_fee["feeRange"].apply(lambda r: f"{r[0]}-{r[1]} sat/vB")
-
                 y_col = "nTx" if "nTx" in df_fee.columns else "totalFees"
                 fig_fee = px.bar(df_fee, x="fee_label", y=y_col, title="💸 Fee Rate Distribution in Mempool")
                 st.plotly_chart(fig_fee, use_container_width=True)
             else:
                 st.warning("❌ Failed to fetch mempool fee histogram.")
 
-        # PDF Export
         if st.button("📝 Export Analysis Report (PDF)"):
             st.warning("PDF export is a premium-only feature. Subscribe or enable enterprise mode to access this.")
     else:

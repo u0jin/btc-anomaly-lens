@@ -1,5 +1,6 @@
 from datetime import datetime
 
+# ✅ 무료 모드용 BlockCypher API 파서
 def parse_blockcypher_transactions(raw_json):
     tx_list = []
 
@@ -15,7 +16,7 @@ def parse_blockcypher_transactions(raw_json):
         outputs = tx.get("outputs", [])
         for out in outputs:
             address_list = out.get("addresses", [])
-            total_btc = out.get("value", 0) / 1e8  # value는 Satoshi 단위
+            total_btc = out.get("value", 0) / 1e8  # Satoshi → BTC
             for addr in address_list:
                 tx_list.append({
                     "timestamp": dt.isoformat(),
@@ -25,7 +26,7 @@ def parse_blockcypher_transactions(raw_json):
 
     return tx_list
 
-# ✅ 프리미엄 모드용 mempool.space 트랜잭션 파서
+# ✅ 프리미엄 모드용 mempool.space API 파서
 def parse_mempool_transactions(raw_json):
     tx_list = []
 
@@ -35,14 +36,18 @@ def parse_mempool_transactions(raw_json):
         if not timestamp:
             continue
         try:
-            dt = datetime.fromtimestamp(timestamp) if isinstance(timestamp, int) else datetime.fromisoformat(timestamp)
+            dt = (
+                datetime.fromtimestamp(timestamp)
+                if isinstance(timestamp, int)
+                else datetime.fromisoformat(timestamp)
+            )
         except:
             continue
 
         outputs = tx.get("vout", [])
         for out in outputs:
             scriptpubkey_address = out.get("scriptpubkey_address")
-            value_btc = out.get("value", 0) / 1e8  # 사토시 단위
+            value_btc = out.get("value", 0) / 1e8
             if scriptpubkey_address:
                 tx_list.append({
                     "timestamp": dt.isoformat(),
