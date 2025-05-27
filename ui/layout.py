@@ -36,13 +36,10 @@ def show_layout(
 
     # 3️⃣ 총점 표시 (100점 초과 시 제한)
     st.markdown(f"<h4>{t['total_score']}: <span style='color:#FF4B4B'>{display_score:.1f} / 100</span></h4>", unsafe_allow_html=True)
-
     if total_score > 100:
         st.caption("⚠️ One or more critical anomalies detected. Total score capped at 100.")
 
-    t = get_text(lang)
-
-    # 📊 레이더 차트
+    # 4️⃣ 레이더 차트 (항목별 정규화 점수)
     with st.expander("📊 Radar Chart"):
         radar_data = {
             "항목": ["간격", "금액", "주소", "시계열", "블랙리스트"],
@@ -51,7 +48,7 @@ def show_layout(
                 amount_score / 25 * 100,
                 address_score / 25 * 100,
                 time_score / 15 * 100,
-                blacklist_score_val  # 이미 0 or 100
+                blacklist_score_val  # 0 or 100
             ]
         }
         fig = go.Figure()
@@ -67,7 +64,7 @@ def show_layout(
         )
         st.plotly_chart(fig, use_container_width=True)
 
-    # 공통 점수 출력 섹션
+    # 5️⃣ 공통 점수 출력 섹션
     def score_section(title, logic_md, score_val, max_score, none_msg, chart_fn=None):
         with st.container():
             st.markdown(f"### {title}")
@@ -79,7 +76,7 @@ def show_layout(
             else:
                 st.info(none_msg)
 
-    # 각 패턴별 시각화 함수
+    # 6️⃣ 시각화 함수 정의
     def interval_chart():
         if short_intervals:
             df = pd.DataFrame(short_intervals, columns=[t['interval_chart_label']])
@@ -112,13 +109,13 @@ def show_layout(
         else:
             st.info(t['timegap_none'])
 
-    # 📌 섹션 호출
+    # 7️⃣ 분석 결과 출력
     score_section(t['interval_title'], t['interval_logic_md'], interval_score, 25, t['interval_none'], interval_chart)
     score_section(t['amount_title'], t['amount_logic_md'], amount_score, 25, t['amount_none'], amount_chart)
     score_section(t['address_title'], t['address_logic_md'], address_score, 25, t['address_none'], address_chart)
     score_section(t['timegap_title'], t['timegap_logic_md'], time_score, 15, t['timegap_none'], timegap_chart)
 
-    # 🕵️ 블랙리스트 탐지
+    # 8️⃣ 블랙리스트
     with st.container():
         st.markdown(f"### {t['blacklist_title']}")
         with st.popover(t['view_logic']):

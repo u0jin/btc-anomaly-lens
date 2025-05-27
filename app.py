@@ -53,16 +53,21 @@ def main():
 
     if st.button("Analyze Address"):
         from api.fetch import get_transaction_data
-        from api.parser import parse_blockcypher_transactions
+        from api.parser import parse_blockcypher_transactions, parse_mempool_transactions
 
         with st.spinner("Fetching and analyzing transactions..."):
             raw_data = get_transaction_data(address, mode="premium" if premium_mode else "free")
-            tx_list = parse_blockcypher_transactions(raw_data)
+            tx_list = (
+                parse_mempool_transactions(raw_data)
+                if premium_mode else
+                parse_blockcypher_transactions(raw_data)
+            )
 
             if not tx_list:
                 st.error("No valid transactions found or address is invalid.")
             else:
-                st.success("✅ Real blockchain data successfully retrieved via BlockCypher token")
+                st.success("✅ Real blockchain data successfully retrieved via {}"
+                           .format("mempool.space" if premium_mode else "BlockCypher"))
 
                 # 점수 계산
                 interval_score, short_intervals = interval_anomaly_score(tx_list)
@@ -86,11 +91,13 @@ def main():
 
                 # API 요청 정보
                 with st.expander("🔍 API Access Info"):
-                    st.markdown(f"""
-                    **Access Mode:** {'Premium' if premium_mode else 'Free'} (Token-authenticated)  
-                    **Source:** BlockCypher.com
-                    """, unsafe_allow_html=True)
-                    st.code(f"GET /addrs/{address}/full?token=****", language="http")
+                    source = "mempool.space" if premium_mode else "BlockCypher.com"
+                    endpoint = (
+                        f"GET /address/{address}/txs" if premium_mode
+                        else f"GET /addrs/{address}/full?token=****"
+                    )
+                    st.markdown(f"**Access Mode:** {'Premium' if premium_mode else 'Free'} (Live API)\n\n**Source:** {source}")
+                    st.code(endpoint, language="http")
 
     # 🔒 프리미엄 기능 안내
     if premium_mode:

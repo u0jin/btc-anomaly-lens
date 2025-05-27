@@ -59,20 +59,15 @@ def time_gap_anomaly_score(tx_list):
 # 5. 블랙리스트 로딩 및 탐지
 def load_blacklist():
     try:
-        # 현재 이 파일 기준 상대 경로로 /data/blacklist.txt 접근
         current_dir = os.path.dirname(__file__)
         blacklist_path = os.path.join(current_dir, "..", "data", "blacklist.txt")
 
-        # 디버그: 경로 출력
         if not os.path.exists(blacklist_path):
             st.error(f"❌ blacklist.txt not found at: {blacklist_path}")
             return set()
 
         with open(blacklist_path, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-            result = set(line.strip() for line in lines if line.strip())
-
-            return result
+            return set(line.strip() for line in f if line.strip())
     except Exception as e:
         st.warning(f"⚠️ 블랙리스트 파일 오류: {e}")
         return set()
@@ -81,5 +76,5 @@ def blacklist_score(tx_list):
     blacklist = load_blacklist()
     involved = [tx.get('to') for tx in tx_list if tx.get('to') in blacklist]
     if involved:
-        return True, 100
+        return True, 100  # 블랙리스트 주소가 포함되면 100점
     return False, 0

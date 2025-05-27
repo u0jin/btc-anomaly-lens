@@ -20,7 +20,34 @@ def parse_blockcypher_transactions(raw_json):
                 tx_list.append({
                     "timestamp": dt.isoformat(),
                     "amount": round(total_btc, 8),
-                    "to": addr  # 여기서 수신 주소 직접 저장
+                    "to": addr
+                })
+
+    return tx_list
+
+# ✅ 프리미엄 모드용 mempool.space 트랜잭션 파서
+def parse_mempool_transactions(raw_json):
+    tx_list = []
+
+    for tx in raw_json:
+        status = tx.get("status", {})
+        timestamp = status.get("block_time") or status.get("received_at")
+        if not timestamp:
+            continue
+        try:
+            dt = datetime.fromtimestamp(timestamp) if isinstance(timestamp, int) else datetime.fromisoformat(timestamp)
+        except:
+            continue
+
+        outputs = tx.get("vout", [])
+        for out in outputs:
+            scriptpubkey_address = out.get("scriptpubkey_address")
+            value_btc = out.get("value", 0) / 1e8  # 사토시 단위
+            if scriptpubkey_address:
+                tx_list.append({
+                    "timestamp": dt.isoformat(),
+                    "amount": round(value_btc, 8),
+                    "to": scriptpubkey_address
                 })
 
     return tx_list
