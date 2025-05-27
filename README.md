@@ -56,10 +56,10 @@ All components are visualized via:
 
 ## 🖼️ Screenshots
 
-![Radar](docs/preview_ui_dashboard.png)  
+![Radar](docs/radar.png)  
 *Interactive radar chart & score breakdown UI*
 
-![Lab UI](docs/preview_lab_ui.png)  
+![Lab UI](docs/lab.png)  
 *Simplified research version for classrooms*
 
 ---
