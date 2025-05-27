@@ -72,8 +72,6 @@ def load_blacklist():
             lines = f.readlines()
             result = set(line.strip() for line in lines if line.strip())
 
-            # 디버그: 결과 확인
-            st.code(f"✅ 블랙리스트 주소 개수: {len(result)}")
             return result
     except Exception as e:
         st.warning(f"⚠️ 블랙리스트 파일 오류: {e}")
