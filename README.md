@@ -56,10 +56,10 @@ All components are visualized via:
 
 ## 🖼️ Screenshots
 
-![Radar](docs/radar.png)  
+![Radar](docs/preview_ui_dashboard.png)  
 *Interactive radar chart & score breakdown UI*
 
-![Lab UI](docs/lab.png)  
+![Lab UI](docs/preview_lab_ui.png)  
 *Simplified research version for classrooms*
 
 ---
@@ -76,23 +76,55 @@ All components are visualized via:
 
 ## 📁 Project Structure
 
-btc-anomaly-lens/
-├── app.py
-├── logic/
-│ └── detection.py
-├── api/
-│ ├── fetch.py
-│ └── parser.py
-├── ui/
-│ ├── layout.py
-│ └── language.py
-├── data/
-│ └── blacklist.txt
-├── docs/
-│ ├── preview_ui_dashboard.png
-│ ├── preview_lab_ui.png
-│ └── You Jin Kim — Resume.pdf
-└── requirements.txt
+📁 btc-anomaly-lens — Project Directory (with Descriptions)
+app.py
+Main entry point of the Streamlit app. Handles UI rendering and integrates detection logic with visualization components.
+
+logic/
+Backend logic for anomaly scoring and pattern detection.
+
+detection.py
+➤ Functions for time interval scoring, amount outlier detection, repeated address checking, time gap anomaly, and blacklist matching.
+
+api/
+Handles data fetching and formatting from external sources (e.g., BlockCypher API).
+
+fetch.py
+➤ Requests transaction data using token-authenticated REST calls.
+
+parser.py
+➤ Converts raw API responses into structured transaction lists.
+
+ui/
+Manages layout, multi-language support, and result visualization.
+
+layout.py
+➤ Displays total risk score, radar/donut/box plots, and section-wise breakdowns.
+
+language.py
+➤ Enables bilingual (English/Korean) display using dynamic text dictionaries.
+
+data/
+Contains auxiliary data such as address blacklists or metadata.
+
+blacklist.txt
+➤ A curated list of high-risk or sanctioned wallet addresses used for blacklist detection logic.
+
+docs/
+Assets for documentation and portfolio presentation.
+
+preview_ui_dashboard.png
+➤ Screenshot of the portfolio version interface with radar and score breakdown.
+
+preview_lab_ui.png
+➤ Screenshot of the research/lab version interface with basic detection UI.
+
+You Jin Kim — Resume.pdf
+➤ Author’s professional resume (used for portfolio reference).
+
+requirements.txt
+Python dependencies required to run the project (for Streamlit, Plotly, NumPy, etc.)
+
 
 
 ---
