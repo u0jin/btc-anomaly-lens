@@ -1,102 +1,126 @@
 # 🧠 BTC Anomaly Lens
 
-> A real-time Bitcoin anomaly detection platform for blockchain forensic research, academic education, and cybersecurity intelligence.
+> A real-time Bitcoin anomaly detection platform for blockchain forensic research, education, and cybersecurity intelligence.
 
-[![Streamlit](https://img.shields.io/badge/🔗%20Portfolio%20Live%20App-btc--anomaly--lens.streamlit.app-orange)](https://btc-anomaly-lens.streamlit.app/)
-[![Streamlit](https://img.shields.io/badge/🧪%20Research%20Lab%20Demo-korea--signal.streamlit.app-blue)](https://btc-anomaly-korea-signal.streamlit.app/)
+[![Live Demo](https://img.shields.io/badge/🔗%20Portfolio%20App-btc--anomaly--lens.streamlit.app-orange)](https://btc-anomaly-lens.streamlit.app/)
+[![Lab Demo](https://img.shields.io/badge/🧪%20Research%20Version-korea--signal.streamlit.app-blue)](https://btc-anomaly-korea-signal.streamlit.app/)
 [![GitHub](https://img.shields.io/badge/🔧%20Source%20Code-GitHub-gray)](https://github.com/u0jin/btc-anomaly-lens)
 [![Resume](https://img.shields.io/badge/📄%20Resume-You%20Jin%20Kim-green)](https://github.com/u0jin/btc-anomaly-lens/blob/main/docs/%F0%9F%93%84%20You%20Jin%20Kim%20%E2%80%94%20Resume.pdf)
 
 ---
 
-## 💡 About
+## 💡 Overview
 
-**BTC Anomaly Lens** is a Bitcoin transaction anomaly detector that supports two versions:
+**BTC Anomaly Lens** is a modular, real-time anomaly detection platform designed for:
 
-- 🎯 **Portfolio Version**: Professional-grade, real-time detection tool with multi-logic scoring, dynamic visualizations, and blacklist matching.
-- 📚 **Research Lab Version**: Lightweight educational version using free API only, designed for student use and open demonstrations.
+- 🔍 Blockchain threat analysis
+- 🛡️ Security portfolio demonstration
+- 🧪 Research and academic education
 
-Built by **You Jin Kim**, a cybersecurity researcher at Korea University.
+The system supports **dual deployment**:
+- 🌐 **Portfolio version** with dynamic UI and multi-logic scoring
+- 🏫 **Free lab version** for education and research labs with no paid API usage
+
+Built and designed by **You Jin Kim**, a cybersecurity researcher specializing in blockchain forensics and anomaly detection.
 
 ---
 
-## 🚀 Live Apps
+## 🚀 Live Demos
 
 | Version | Link | Description |
 |--------|------|-------------|
-| 🌐 **Portfolio** | [btc-anomaly-lens.streamlit.app](https://btc-anomaly-lens.streamlit.app/) | TRM Labs-ready professional UI with advanced logic |
-| 🏫 **Lab Demo** | [btc-anomaly-korea-signal.streamlit.app](https://btc-anomaly-korea-signal.streamlit.app/) | Free version used for research and internal deployment |
+| 🌐 Portfolio App | [btc-anomaly-lens.streamlit.app](https://btc-anomaly-lens.streamlit.app/) | Real-time scoring, blacklist detection, multilingual UI |
+| 🏫 Lab Version | [btc-anomaly-korea-signal.streamlit.app](https://btc-anomaly-korea-signal.streamlit.app/) | Educational version using free API, deployed in university labs |
 
 ---
 
-## 🔍 Key Features
+## 🔍 Core Features
 
-| Detection Module | Description |
+| Detection Logic | Description |
 |------------------|-------------|
-| ⏱ Time Interval Anomaly | Detects repeated transfers within 60 seconds |
-| 💰 Amount Outlier Detection | Uses IQR to flag outlier BTC amounts |
-| 🔁 Repeated Receiver Pattern | Detects 3+ times repeated recipients |
-| 📈 Time Gap Anomaly | Flags extreme timing gaps (<10s or >1h) |
-| 🚨 Blacklist Matching | OFAC / TRM / internal addresses detection |
+| ⏱ **Time Interval** | Detects repeated transfers within 60 seconds |
+| 💰 **Amount Outliers** | Flags high-value anomalies using IQR logic |
+| 🔁 **Repeated Address Pattern** | Detects repeated recipients (≥3 times) |
+| 📈 **Time Gap Extremes** | Flags gaps <10s or >1 hour |
+| 🚨 **Blacklist Matching** | Matches addresses against sanctions/risk list |
 
-🧮 Risk Score is calculated by modular functions and visualized via:
-- Radar charts
-- Donut charts
-- Box plots
-- Histograms
+🧮 Each logic produces a modular risk score.  
+All components are visualized via:
 
----
-
-## 📸 Screenshots
-
-### 🧠 Real-Time Detection UI  
-![Radar](docs/radar.png)
-
-### 🧪 Educational Version  
-![Lab UI](docs/lab.png)
+- 📊 Radar chart
+- 🍩 Donut breakdown
+- 📦 Box plot
+- 📉 Histogram
 
 ---
 
-## 🛠 Tech Stack
+## 🖼️ Screenshots
 
-- Streamlit frontend (English + Korean)
-- Python + NumPy + Pandas backend
-- Plotly for visual analytics
-- BlockCypher REST API
-- GitHub Actions / Deployment Ready
+![Radar](docs/preview_ui_dashboard.png)  
+*Interactive radar chart & score breakdown UI*
+
+![Lab UI](docs/preview_lab_ui.png)  
+*Simplified research version for classrooms*
 
 ---
 
-## 📄 Resume
+## 🛠️ Tech Stack
+
+- **Frontend**: Streamlit (bilingual UI)
+- **Backend**: Python, Pandas, NumPy
+- **Visualization**: Plotly
+- **API**: BlockCypher (Free/Token mode)
+- **Deployment**: GitHub + Streamlit Cloud
+
+---
+
+## 📁 Project Structure
+
+btc-anomaly-lens/
+├── app.py
+├── logic/
+│ └── detection.py
+├── api/
+│ ├── fetch.py
+│ └── parser.py
+├── ui/
+│ ├── layout.py
+│ └── language.py
+├── data/
+│ └── blacklist.txt
+├── docs/
+│ ├── preview_ui_dashboard.png
+│ ├── preview_lab_ui.png
+│ └── You Jin Kim — Resume.pdf
+└── requirements.txt
+
+
+---
+
+## 👤 About the Creator
 
 **You Jin Kim (김유진)**  
 M.S. in Information Security, Korea University  
 ✉️ youjin.kim@korea.ac.kr  
-📄 [Resume PDF](https://github.com/u0jin/btc-anomaly-lens/blob/main/docs/%F0%9F%93%84%20You%20Jin%20Kim%20%E2%80%94%20Resume.pdf)  
-🔗 [GitHub Profile](https://github.com/u0jin)
+🔗 [GitHub Profile](https://github.com/u0jin)  
+📄 [View Resume (PDF)](https://github.com/u0jin/btc-anomaly-lens/blob/main/docs/%F0%9F%93%84%20You%20Jin%20Kim%20%E2%80%94%20Resume.pdf)
+
+---
+
+## 🧠 Vision
+
+> “This project reflects not only technical capability, but also the ability to define problems, design logic, and ship usable cybersecurity tools.”
+
+It is meant to serve as:
+
+- A practical portfolio in blockchain analytics
+- A demo for real-time risk logic and UX thinking
+- A reproducible research toolkit for education
 
 ---
 
 ## 📜 License
 
-MIT License — fork or adapt freely, with credit.
+MIT License — free to use, modify, and distribute for any purpose, as long as attribution is given to the original author.
 
 ---
-
-## 🧠 Philosophy
-
-> “This is not just a tool — it’s a reflection of research logic, product thinking, and cybersecurity insight.”
-
-Every scoring function, blacklist detection rule, and visualization was custom-designed and explained.  
-The project demonstrates not only academic skills but also real-world technical ownership.
-
----
-
-## 🧭 Bonus
-
-| Area | Use |
-|------|-----|
-| 🎓 Academic | Blockchain forensic research, reproducible scoring logic |
-| 💼 Portfolio | Interview-ready, GitHub-linked, self-developed product |
-| 🧪 Education | Free version for students with no paid API key |
-
