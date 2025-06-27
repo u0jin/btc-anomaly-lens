@@ -9,9 +9,17 @@ def interval_anomaly_score(tx_list):
     if len(tx_list) < 2:
         return 0, []
     try:
-        timestamps = [datetime.fromisoformat(tx['timestamp']) for tx in tx_list]
+        timestamps = [
+            datetime.fromisoformat(tx['timestamp'])
+            for tx in tx_list
+            if isinstance(tx, dict) and 'timestamp' in tx
+        ]
     except Exception:
         return 0, []
+    
+    if len(timestamps) < 2:
+        return 0, []
+
     intervals = [
         (t2 - t1).total_seconds()
         for t1, t2 in zip(timestamps[:-1], timestamps[1:])
@@ -20,21 +28,27 @@ def interval_anomaly_score(tx_list):
     score = min(25, len(short_intervals) * 5)
     return score, short_intervals
 
+
 # 2. 이상 금액 탐지 (IQR 이상)
 def amount_anomaly_score(tx_list):
-    values = [tx['amount'] for tx in tx_list if 'amount' in tx]
-    if len(values) < 2:
+    values = [tx['amount'] for tx in tx_list if isinstance(tx, dict) and 'amount' in tx]
+    if not values:
         return 0, []
-    q1, q3 = np.percentile(values, [25, 75])
+
+    df = pd.DataFrame(values, columns=['amount'])
+    q1 = df['amount'].quantile(0.25)
+    q3 = df['amount'].quantile(0.75)
     iqr = q3 - q1
     threshold = q3 + 1.5 * iqr
-    outliers = [v for v in values if v > threshold]
-    score = min(25, len(outliers) * 5)
+    outliers = df[df['amount'] > threshold]['amount'].tolist()
+
+    score = min(len(outliers) * 5, 25)
     return score, outliers
 
 # 3. 동일 수신 주소 반복 탐지
 def repeated_address_score(tx_list):
-    targets = [tx.get('to') for tx in tx_list if tx.get('to')]
+    targets = [tx.get('to') for tx in tx_list if isinstance(tx, dict) and tx.get('to')]
+
     counter = Counter(targets)
     flagged = [addr for addr, count in counter.items() if count >= 3]
     score = min(25, len(flagged) * 5)
@@ -74,7 +88,7 @@ def load_blacklist():
 
 def blacklist_score(tx_list):
     blacklist = load_blacklist()
-    involved = [tx.get('to') for tx in tx_list if tx.get('to') in blacklist]
+    involved = [tx.get('to') for tx in tx_list if isinstance(tx, dict) and tx.get('to') in blacklist]
     if involved:
         return True, 100  # 블랙리스트 주소가 포함되면 100점
     return False, 0

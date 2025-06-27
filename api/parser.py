@@ -15,8 +15,8 @@ def parse_blockcypher_transactions(raw_json):
 
         outputs = tx.get("outputs", [])
         for out in outputs:
-            address_list = out.get("addresses", [])
-            total_btc = out.get("value", 0) / 1e8  # Satoshi → BTC
+            address_list = out.get("addresses") or []  # ← 여기만 수정!
+            total_btc = out.get("value", 0) / 1e8
             for addr in address_list:
                 tx_list.append({
                     "timestamp": dt.isoformat(),
@@ -25,6 +25,7 @@ def parse_blockcypher_transactions(raw_json):
                 })
 
     return tx_list
+
 
 # ✅ 프리미엄 모드용 mempool.space API 파서
 def parse_mempool_transactions(raw_json):
