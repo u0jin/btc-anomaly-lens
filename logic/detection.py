@@ -1,8 +1,9 @@
 from datetime import datetime
 from collections import Counter
 import numpy as np
+import pandas as pd  # ✅ 이거 반드시 추가
 import os
-import streamlit as st  # 경고 메시지 출력용
+import streamlit as st # 경고 메시지 출력용
 
 # 1. 거래 간격 이상 탐지 (60초 미만)
 def interval_anomaly_score(tx_list):
