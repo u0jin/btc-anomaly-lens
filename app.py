@@ -13,6 +13,8 @@ from logic.detection import (
 from logic.graph import generate_transaction_network
 from api.fetch import get_transaction_data, fetch_fee_histogram
 from api.parser import parse_blockcypher_transactions, parse_mempool_transactions
+from logic.preprocess import preprocess
+
 
 def main():
     st.set_page_config(page_title="BTC Anomaly Lens", layout="wide")
@@ -68,6 +70,9 @@ def main():
             if not tx_list:
                 st.error("No valid transactions found or address is invalid.")
                 return
+            
+            tx_list = preprocess(tx_list)
+
 
             st.success(f"✅ Real blockchain data successfully retrieved via {'mempool.space' if premium_mode else 'BlockCypher'}")
 
