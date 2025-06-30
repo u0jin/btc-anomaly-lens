@@ -14,10 +14,8 @@ def show_layout(
 ):
     t = get_text(lang)
 
-    # 1️⃣ 시각용 점수: 최대 100점까지만 표시
     display_score = min(total_score, 100)
 
-    # 2️⃣ 도넛 차트: 점수 구성 비율 시각화
     with st.expander("📊 Risk Score Breakdown (Donut Chart)", expanded=False):
         score_parts = {
             "Interval": interval_score,
@@ -34,12 +32,10 @@ def show_layout(
         )
         st.plotly_chart(fig_donut, use_container_width=True)
 
-    # 3️⃣ 총점 표시 (100점 초과 시 제한)
     st.markdown(f"<h4>{t['total_score']}: <span style='color:#FF4B4B'>{display_score:.1f} / 100</span></h4>", unsafe_allow_html=True)
     if total_score > 100:
         st.caption("⚠️ One or more critical anomalies detected. Total score capped at 100.")
 
-    # 4️⃣ 레이더 차트 (항목별 정규화 점수)
     with st.expander("📊 Radar Chart"):
         radar_data = {
             "항목": ["간격", "금액", "주소", "시계열", "블랙리스트"],
@@ -48,7 +44,7 @@ def show_layout(
                 amount_score / 25 * 100,
                 address_score / 25 * 100,
                 time_score / 15 * 100,
-                blacklist_score_val  # 0 or 100
+                blacklist_score_val
             ]
         }
         fig = go.Figure()
@@ -64,7 +60,6 @@ def show_layout(
         )
         st.plotly_chart(fig, use_container_width=True)
 
-    # 5️⃣ 공통 점수 출력 섹션
     def score_section(title, logic_md, score_val, max_score, none_msg, chart_fn=None):
         with st.container():
             st.markdown(f"### {title}")
@@ -76,7 +71,6 @@ def show_layout(
             else:
                 st.info(none_msg)
 
-    # 6️⃣ 시각화 함수 정의
     def interval_chart():
         if short_intervals:
             df = pd.DataFrame(short_intervals, columns=[t['interval_chart_label']])
@@ -109,13 +103,11 @@ def show_layout(
         else:
             st.info(t['timegap_none'])
 
-    # 7️⃣ 분석 결과 출력
     score_section(t['interval_title'], t['interval_logic_md'], interval_score, 25, t['interval_none'], interval_chart)
     score_section(t['amount_title'], t['amount_logic_md'], amount_score, 25, t['amount_none'], amount_chart)
     score_section(t['address_title'], t['address_logic_md'], address_score, 25, t['address_none'], address_chart)
     score_section(t['timegap_title'], t['timegap_logic_md'], time_score, 15, t['timegap_none'], timegap_chart)
 
-    # 8️⃣ 블랙리스트
     with st.container():
         st.markdown(f"### {t['blacklist_title']}")
         with st.popover(t['view_logic']):
@@ -123,8 +115,18 @@ def show_layout(
         st.markdown(f"**{t['score']}:** {blacklist_score_val:.1f} / 100")
         if blacklist_flag:
             st.error(t['blacklist_flagged'])
+            st.caption("⚠️ This address is associated with known sanctioned or darknet entities.")
         else:
             st.success(t['blacklist_safe'])
+            st.caption("✅ No critical blacklist match found. Address appears clean.")
+
+        # 자동 해석 문장 출력
+        if total_score >= 75:
+            st.warning("🔍 This address exhibits highly suspicious behavior and matches several risk factors including timing, repetition, and potential sanctioning.")
+        elif total_score >= 50:
+            st.info("⚠️ This address has moderate anomalies that may warrant further investigation.")
+        else:
+            st.success("🟢 No significant anomalies detected. Address shows normal transaction behavior.")
 
 # 🔧 확장용 placeholder
 def render_interval_chart(data):

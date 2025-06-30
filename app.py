@@ -15,7 +15,6 @@ from api.fetch import get_transaction_data, fetch_fee_histogram
 from api.parser import parse_blockcypher_transactions, parse_mempool_transactions
 from logic.preprocess import preprocess
 
-
 def main():
     st.set_page_config(page_title="BTC Anomaly Lens", layout="wide")
     lang = st.sidebar.selectbox("Language / 언어", ["English", "한국어"])
@@ -46,13 +45,25 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
-    # 🪧 상단 제목
+    # 🔷 인트로 섹션 강화
     st.markdown("""
     <div style='text-align: center; padding: 10px 0;'>
         <h2 style='color: #08BDBD;'>BTC Anomaly Lens</h2>
-        <p style='color: #999;'>Developed by You Jin Kim ｜ Blockchain Security Researcher</p>
+        <p style='color: #555;'>Real-time Bitcoin Threat Intelligence Toolkit ｜ Developed by You Jin Kim</p>
     </div>
     """, unsafe_allow_html=True)
+
+    with st.expander("🧠 About This Tool"):
+        st.markdown("""
+        **BTC Anomaly Lens** is a forensic-grade Bitcoin anomaly detection tool designed for real-time threat simulation. This tool integrates:
+
+        - 📡 Live mempool transaction analysis
+        - 🧠 Custom anomaly scoring algorithms
+        - 🕸 Forensic clustering and network visualization
+        - 📊 Dynamic fee analysis (Premium Mode)
+
+        Built with a deep understanding of blockchain structures (UTXO) and cybercrime patterns.
+        """)
 
     # 🧪 주소 입력
     st.subheader("Live Transaction Analysis")
@@ -72,7 +83,6 @@ def main():
                 return
             
             tx_list = preprocess(tx_list)
-
 
             st.success(f"✅ Real blockchain data successfully retrieved via {'mempool.space' if premium_mode else 'BlockCypher'}")
 
@@ -98,8 +108,8 @@ def main():
             if premium_mode:
                 encoded_img = generate_transaction_network(tx_list)
                 if encoded_img:
-                    st.markdown("### 🕸 Transaction Flow Network")
-                    st.image(f"data:image/png;base64,{encoded_img}", use_column_width=True)
+                    with st.expander("🕸 Transaction Flow Network", expanded=False):
+                        st.image(f"data:image/png;base64,{encoded_img}", use_column_width=True)
 
             # API 호출 정보
             with st.expander("🔍 API Access Info"):
@@ -116,8 +126,8 @@ def main():
         st.markdown("### 📊 Premium Features")
         st.info("Advanced clustering visualization and darknet address correlation are under development.")
         st.markdown("""
-        - Real-time mempool anomaly map (Coming Soon)  
-        - Address graph network visualization ✅  
+        - Real-time mempool anomaly map (Coming Soon)<br>
+        - Address graph network visualization ✅<br>
         - Dynamic fee risk estimation (Coming Soon)
         """, unsafe_allow_html=True)
 
