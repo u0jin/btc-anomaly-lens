@@ -128,6 +128,12 @@ def main():
                 blacklist_score_val, blacklist_flag
             )
 
+            # ⏱ 이상 간격 시각화
+            if abnormal_gaps:
+                df_gaps = pd.DataFrame(abnormal_gaps, columns=["tx_hash", "gap_seconds"])
+                fig_gaps = px.bar(df_gaps, x="tx_hash", y="gap_seconds", title="⏱ Abnormal Time Gaps Detected")
+                st.plotly_chart(fig_gaps, use_container_width=True)
+
             # 🕸 네트워크 그래프 (프리미엄 전용)
             if premium_mode:
                 encoded_img = generate_transaction_network(tx_list)

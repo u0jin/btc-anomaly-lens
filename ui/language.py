@@ -89,7 +89,7 @@ def get_text(lang):
             "view_logic": " View Scoring Logic",
 
             # 1. Interval
-            "interval_title": "⏱ Time Interval Anomaly",
+            "interval_title": " Time Interval Anomaly",
             "interval_logic_md": """
             **Function:** `interval_anomaly_score(tx_list)`  
             **Definition:** Detects transactions spaced less than 60s apart.  
