@@ -4,6 +4,30 @@ import plotly.graph_objects as go
 import pandas as pd
 from ui.language import get_text
 
+# 💎 프리미엄 UI 스타일 적용
+st.markdown("""
+<style>
+div.stButton > button:first-child {
+    background-color: #08BDBD;
+    color: white;
+    font-weight: 600;
+    padding: 0.6em 1.2em;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+div.stButton > button:hover {
+    background-color: #0a9a9a;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# 사이드바에 툴 목적 명시
+st.sidebar.markdown("""
+<span style='font-size:13px; color:gray'>
+🔍 This tool is developed as part of a real-world blockchain forensic system, simulating TRM-style risk detection.
+</span>
+""", unsafe_allow_html=True)
+
 def show_layout(
     lang, total_score,
     interval_score, short_intervals,
@@ -33,6 +57,7 @@ def show_layout(
         st.plotly_chart(fig_donut, use_container_width=True)
 
     st.markdown(f"<h4>{t['total_score']}: <span style='color:#FF4B4B'>{display_score:.1f} / 100</span></h4>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-weight:500; color:#ccc;'>This score is calculated from multiple behavioral anomaly metrics designed to reflect forensic risk in live BTC traffic.</p>", unsafe_allow_html=True)
     if total_score > 100:
         st.caption("⚠️ One or more critical anomalies detected. Total score capped at 100.")
 
@@ -103,13 +128,13 @@ def show_layout(
         else:
             st.info(t['timegap_none'])
 
-    score_section(t['interval_title'], t['interval_logic_md'], interval_score, 25, t['interval_none'], interval_chart)
-    score_section(t['amount_title'], t['amount_logic_md'], amount_score, 25, t['amount_none'], amount_chart)
-    score_section(t['address_title'], t['address_logic_md'], address_score, 25, t['address_none'], address_chart)
-    score_section(t['timegap_title'], t['timegap_logic_md'], time_score, 15, t['timegap_none'], timegap_chart)
+    score_section("⏱️ " + t['interval_title'], t['interval_logic_md'], interval_score, 25, t['interval_none'], interval_chart)
+    score_section("💰 " + t['amount_title'], t['amount_logic_md'], amount_score, 25, t['amount_none'], amount_chart)
+    score_section("🔁 " + t['address_title'], t['address_logic_md'], address_score, 25, t['address_none'], address_chart)
+    score_section("📉 " + t['timegap_title'], t['timegap_logic_md'], time_score, 15, t['timegap_none'], timegap_chart)
 
     with st.container():
-        st.markdown(f"### {t['blacklist_title']}")
+        st.markdown(f"### 🚫 {t['blacklist_title']}")
         with st.popover(t['view_logic']):
             st.markdown(t['blacklist_logic_md'], unsafe_allow_html=True)
         st.markdown(f"**{t['score']}:** {blacklist_score_val:.1f} / 100")
@@ -120,7 +145,6 @@ def show_layout(
             st.success(t['blacklist_safe'])
             st.caption("✅ No critical blacklist match found. Address appears clean.")
 
-        # 자동 해석 문장 출력
         if total_score >= 75:
             st.warning("🔍 This address exhibits highly suspicious behavior and matches several risk factors including timing, repetition, and potential sanctioning.")
         elif total_score >= 50:

@@ -28,7 +28,7 @@ def get_text(lang):
             "interval_none": "60초 미만의 거래 간격이 감지되지 않았습니다.",
 
             # 2. 이상 거래 금액
-            "amount_title": "💰 이상 거래 금액",
+            "amount_title": " 이상 거래 금액",
             "amount_logic_md": """
             **함수명:** `amount_anomaly_score(tx_list)`  
             **정의:** 중위값 기준 이상금액(IQR 기준 초과)을 탐지합니다.  
@@ -39,7 +39,7 @@ def get_text(lang):
             "amount_none": "이상 거래 금액이 감지되지 않았습니다.",
 
             # 3. 동일 수신 주소 반복
-            "address_title": "📩 동일 수신 주소 반복",
+            "address_title": " 동일 수신 주소 반복",
             "address_logic_md": """
             **함수명:** `repeated_address_score(tx_list)`  
             **정의:** 동일한 수신 주소가 3회 이상 반복될 경우,  
@@ -51,7 +51,7 @@ def get_text(lang):
             "address_none": "반복된 수신 주소가 감지되지 않았습니다.",
 
             # 4. 시계열 간격 이상
-            "timegap_title": "⏳ 시계열 상 이상 간격",
+            "timegap_title": " 시계열 상 이상 간격",
             "timegap_logic_md": """
             **함수명:** `time_gap_anomaly_score(tx_list)`  
             **정의:** 10초 이하 또는 1시간 이상인 비정상 시간 간격 탐지  
@@ -62,7 +62,7 @@ def get_text(lang):
             "timegap_none": "비정상 시간 간격이 감지되지 않았습니다.",
 
             # 5. 블랙리스트 탐지
-            "blacklist_title": "🕵️ 제재 주소 탐지",
+            "blacklist_title": " 제재 주소 탐지",
             "blacklist_logic_md": """
             **함수명:** `blacklist_score(tx_list)`  
             **정의:** 국제 제재 목록 (OFAC 등)에 포함된 주소 발견 시,  
@@ -84,9 +84,9 @@ def get_text(lang):
             "creator_section": "About the Creator",
 
             # Shared
-            "total_score": "🧠 Total Risk Score",
+            "total_score": " Total Risk Score",
             "score": "Score",
-            "view_logic": "📘 View Scoring Logic",
+            "view_logic": " View Scoring Logic",
 
             # 1. Interval
             "interval_title": "⏱ Time Interval Anomaly",
@@ -100,7 +100,7 @@ def get_text(lang):
             "interval_none": "No short intervals detected.",
 
             # 2. Amount
-            "amount_title": "💰 Amount Outlier Detection",
+            "amount_title": " Amount Outlier Detection",
             "amount_logic_md": """
             **Function:** `amount_anomaly_score(tx_list)`  
             **Definition:** Detects abnormal values beyond 1.5x IQR.  
@@ -111,7 +111,7 @@ def get_text(lang):
             "amount_none": "No outlier transactions detected.",
 
             # 3. Address
-            "address_title": "📩 Repeated Receiver Address",
+            "address_title": " Repeated Receiver Address",
             "address_logic_md": """
             **Function:** `repeated_address_score(tx_list)`  
             **Definition:** Detects repeated receiver addresses (≥3).  
@@ -122,7 +122,7 @@ def get_text(lang):
             "address_none": "No repeated addresses detected.",
 
             # 4. Time Gap
-            "timegap_title": "⏳ Abnormal Time Gaps",
+            "timegap_title": " Abnormal Time Gaps",
             "timegap_logic_md": """
             **Function:** `time_gap_anomaly_score(tx_list)`  
             **Definition:** Detects irregular time gaps (<10s or >1h).  
@@ -133,7 +133,7 @@ def get_text(lang):
             "timegap_none": "No irregular gaps detected.",
 
             # 5. Blacklist
-            "blacklist_title": "🕵️ Blacklist Detection",
+            "blacklist_title": " Blacklist Detection",
             "blacklist_logic_md": """
             **Function:** `blacklist_score(tx_list)`  
             **Definition:** Detects addresses matching OFAC or sanction lists.  

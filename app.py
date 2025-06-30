@@ -15,6 +15,23 @@ from api.fetch import get_transaction_data, fetch_fee_histogram
 from api.parser import parse_blockcypher_transactions, parse_mempool_transactions
 from logic.preprocess import preprocess
 
+# 💎 버튼 스타일 전역 적용
+st.markdown("""
+<style>
+div.stButton > button:first-child {
+    background-color: #08BDBD;
+    color: white;
+    font-weight: 600;
+    padding: 0.6em 1.2em;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+div.stButton > button:hover {
+    background-color: #0a9a9a;
+}
+</style>
+""", unsafe_allow_html=True)
+
 def main():
     st.set_page_config(page_title="BTC Anomaly Lens", layout="wide")
     lang = st.sidebar.selectbox("Language / 언어", ["English", "한국어"])
@@ -24,6 +41,13 @@ def main():
     st.sidebar.markdown("---")
     premium_mode = st.sidebar.checkbox("🔐 Enable Premium Mode", value=False)
     st.sidebar.markdown(t["premium_on"] if premium_mode else t["premium_off"])
+
+    # 사이드 목적 설명
+    st.sidebar.markdown("""
+    <span style='font-size:13px; color:gray'>
+    🔍 Developed for real-world blockchain forensic simulation.
+    </span>
+    """, unsafe_allow_html=True)
 
     # 🧑‍💻 개발자 소개
     with st.sidebar.expander(f"🧑‍💻 {t['creator_section']}", expanded=False):
@@ -81,7 +105,7 @@ def main():
             if not tx_list:
                 st.error("No valid transactions found or address is invalid.")
                 return
-            
+
             tx_list = preprocess(tx_list)
 
             st.success(f"✅ Real blockchain data successfully retrieved via {'mempool.space' if premium_mode else 'BlockCypher'}")
