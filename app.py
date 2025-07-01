@@ -54,17 +54,17 @@ with st.expander("🧠 About This Tool"):
     st.markdown("""
     <div style='font-size:15px;'>
     <b style='color:#08BDBD;'>BTC Anomaly Lens</b> is a forensic-grade Bitcoin anomaly detection platform designed for practical use in threat intelligence and cybercrime investigations.<br><br>
-    
+
     <b style='color:#00FFFF;'>Core Capabilities:</b>
     <ul style='padding-left:1.2em;'>
-        <li><b>Live mempool transaction parsing:</b> Fetches and analyzes unconfirmed Bitcoin transactions in real-time</li>
-        <li><b>Custom anomaly scoring engine:</b> Flags abnormal patterns across time intervals, amounts, address reuse, and blacklist hits</li>
-        <li><b>Clustering & network visualization:</b> Detects behaviorally linked addresses and renders interaction graphs</li>
-        <li><b>Dynamic fee insight (Premium Mode):</b> Monitors mempool fee structures to identify atypical urgency or obfuscation tactics</li>
-        <li><b>PDF reporting system:</b> Converts findings into clean, analyst-ready reports with score breakdowns and graphs</li>
+        <li><b>Live mempool transaction parsing:</b> Fetches and analyzes unconfirmed Bitcoin transactions in real-time via REST APIs</li>
+        <li><b>Custom anomaly scoring engine:</b> Flags abnormal patterns across time intervals, transaction amounts, repeated addresses, and blacklist hits</li>
+        <li><b>Semi-heuristic clustering & network visualization:</b> Groups behaviorally linked addresses (e.g., timing, output reuse) and visualizes interactions using on-chain flows</li>
+        <li><b>Dynamic fee analysis (Premium Mode):</b> Analyzes mempool fee histograms to detect urgency-driven anomalies or potential obfuscation tactics</li>
+        <li><b>PDF report generation:</b> Produces structured, exportable reports suitable for compliance, internal documentation, or regulatory communication</li>
     </ul>
 
-    <p>This tool was developed by a blockchain security researcher with strong UTXO modeling experience and academic background in cybercrime detection.</p>
+    <p>This system was developed by a researcher specializing in blockchain forensics and anomaly modeling based on UTXO structures. It was originally built for academic validation and has been adapted for field-grade analyst use.</p>
 
     🔗 <a href='https://github.com/u0jin/btc-anomaly-lens/blob/main/WHITEPAPER.md' target='_blank'><b>📘 View Full Whitepaper</b></a>
     </div>
