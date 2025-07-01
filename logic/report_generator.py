@@ -78,7 +78,7 @@ def generate_pdf_report(address, total_score, scores_dict):
             "Amount Outliers: Identifies transactions far exceeding the statistical average.",
             "Repeated Recipients: Flags frequent reuse of the same recipient address.",
             "Time Gaps: Highlights silent periods and activity bursts.",
-            "Blacklist Hits: Detects if the address appears in OFAC, TRM Labs, or other sanctions lists."
+            "Blacklist Hits: Detects if the address appears in OFAC or other sanctions lists."
         ]),
         ("Score Interpretation:", [
             "Scores near 25 indicate stronger anomalies and deserve closer inspection.",
