@@ -72,42 +72,41 @@ def generate_pdf_report(address, total_score, scores_dict):
     elements.append(table)
     elements.append(Spacer(1, 24))
 
-    elements.append(Paragraph("Detection Criteria:", styles['SectionHeader']))
-    elements.append(Paragraph(
-        "• Short Interval: Detects repetitive transfers in short bursts.<br/>"
-        "• Amount Outliers: Identifies transactions far exceeding the statistical average.<br/>"
-        "• Repeated Recipients: Flags frequent reuse of the same recipient address.<br/>"
-        "• Time Gaps: Highlights silent periods and activity bursts.<br/>"
-        "• Blacklist Hits: Detects if the address appears in OFAC, TRM Labs, or other sanctions lists.", styles['BodyText']))
-    elements.append(Spacer(1, 10))
+    sections = [
+        ("Detection Criteria:", [
+            "Short Interval: Detects repetitive transfers in short bursts.",
+            "Amount Outliers: Identifies transactions far exceeding the statistical average.",
+            "Repeated Recipients: Flags frequent reuse of the same recipient address.",
+            "Time Gaps: Highlights silent periods and activity bursts.",
+            "Blacklist Hits: Detects if the address appears in OFAC, TRM Labs, or other sanctions lists."
+        ]),
+        ("Score Interpretation:", [
+            "Scores near 25 indicate stronger anomalies and deserve closer inspection.",
+            "A high score in Blacklist implies direct association with known malicious actors.",
+            "Timing-based scores reflect bursty activity or latency obfuscation techniques.",
+            "Combined, they form a risk fingerprint used in forensic threat intelligence workflows."
+        ]),
+        ("Example Scenarios:", [
+            "A high Amount Outlier score may suggest obfuscation via large-value splitting.",
+            "Frequent Recipient Reuse can indicate mixer payouts or laundering routines.",
+            "Gaps and bursts may reflect automated bots or compromised wallets."
+        ]),
+        ("Recommended Action:", [
+            "Investigate clustering relationships and source transactions.",
+            "Cross-reference with external threat feeds (e.g., TRM, Chainalysis).",
+            "Monitor for future darknet or exchange appearances."
+        ]),
+        ("Analyst Note:", [
+            "This report is based on custom-defined detection rules integrating academic and applied blockchain research.",
+            "Radar score profiles assist in visual triage for SOC and forensic workflows."
+        ])
+    ]
 
-    elements.append(Paragraph("Score Interpretation:", styles['SectionHeader']))
-    elements.append(Paragraph(
-        "• Scores near 25 indicate stronger anomalies and deserve closer inspection.<br/>"
-        "• A high score in Blacklist implies direct association with known malicious actors.<br/>"
-        "• Timing-based scores reflect bursty activity or latency obfuscation techniques.<br/>"
-        "• Combined, they form a risk fingerprint used in forensic threat intelligence workflows.", styles['BodyText']))
-    elements.append(Spacer(1, 10))
-
-    elements.append(Paragraph("Example Scenarios:", styles['SectionHeader']))
-    elements.append(Paragraph(
-        "• A high Amount Outlier score may suggest obfuscation via large-value splitting.<br/>"
-        "• Frequent Recipient Reuse can indicate mixer payouts or laundering routines.<br/>"
-        "• Gaps and bursts may reflect automated bots or compromised wallets.", styles['BodyText']))
-    elements.append(Spacer(1, 10))
-
-    elements.append(Paragraph("Recommended Action:", styles['SectionHeader']))
-    elements.append(Paragraph(
-        "• Investigate clustering relationships and source transactions.<br/>"
-        "• Cross-reference with external threat feeds (e.g., TRM, Chainalysis).<br/>"
-        "• Monitor for future darknet or exchange appearances.", styles['BodyText']))
-    elements.append(Spacer(1, 10))
-
-    elements.append(Paragraph("Analyst Note:", styles['SectionHeader']))
-    elements.append(Paragraph(
-        "• This report is based on custom-defined detection rules integrating academic and applied blockchain research.<br/>"
-        "• Radar score profiles assist in visual triage for SOC and forensic workflows.", styles['BodyText']))
-    elements.append(Spacer(1, 20))
+    for title, lines in sections:
+        elements.append(Paragraph(title, styles['SectionHeader']))
+        for line in lines:
+            elements.append(Paragraph(f"• {line}", styles['BodyText']))
+        elements.append(Spacer(1, 10))
 
     categories = list(scores_dict.keys())
     values = list(scores_dict.values())
