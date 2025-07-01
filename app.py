@@ -14,6 +14,8 @@ from logic.graph import generate_transaction_network
 from api.fetch import get_transaction_data, fetch_fee_histogram
 from api.parser import parse_blockcypher_transactions, parse_mempool_transactions
 from logic.preprocess import preprocess
+from logic.report_generator import generate_pdf_report  # ✅ 추가
+import base64
 
 # 💎 버튼 스타일 전역 적용
 st.markdown("""
@@ -69,7 +71,7 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
-    # 🔷 인트로 섹션 강화
+    # 🔷 인트로 세트에서 강화
     st.markdown("""
     <div style='text-align: center; padding: 10px 0;'>
         <h2 style='color: #08BDBD;'>BTC Anomaly Lens</h2>
@@ -118,6 +120,15 @@ def main():
             blacklist_flag, blacklist_score_val = blacklist_score(tx_list)
             total_score = interval_score + amount_score + address_score + time_score + blacklist_score_val
 
+            # 점수 보고서 만들기 위해 전달
+            scores_dict = {
+                "Short Interval Score": interval_score,
+                "Amount Outlier Score": amount_score,
+                "Repeated Address Score": address_score,
+                "Time Gap Score": time_score,
+                "Blacklist Score": blacklist_score_val
+            }
+
             # 🔍 결과 시각화 출력
             show_layout(
                 lang, total_score,
@@ -128,7 +139,7 @@ def main():
                 blacklist_score_val, blacklist_flag
             )
 
-            # ⏱ 이상 간격 시각화
+            # ⏱ 이상 갈객 시각화
             if abnormal_gaps:
                 df_gaps = pd.DataFrame(abnormal_gaps, columns=["tx_hash", "gap_seconds"])
                 fig_gaps = px.bar(df_gaps, x="tx_hash", y="gap_seconds", title="⏱ Abnormal Time Gaps Detected")
@@ -140,6 +151,13 @@ def main():
                 if encoded_img:
                     with st.expander("🕸 Transaction Flow Network", expanded=False):
                         st.image(f"data:image/png;base64,{encoded_img}", use_column_width=True)
+
+            # 📄 보고서 ëb0b4보기
+            if premium_mode:
+                pdf_bytes = generate_pdf_report(address, total_score, scores_dict).getvalue()
+                b64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
+                href = f'<a href="data:application/pdf;base64,{b64_pdf}" download="BTC_Anomaly_Report.pdf">📄 Download PDF Report</a>'
+                st.markdown(href, unsafe_allow_html=True)
 
             # API 호출 정보
             with st.expander("🔍 API Access Info"):
@@ -171,9 +189,6 @@ def main():
                 st.plotly_chart(fig_fee, use_container_width=True)
             else:
                 st.warning("❌ Failed to fetch mempool fee histogram.")
-
-        if st.button("📝 Export Analysis Report (PDF)"):
-            st.warning("PDF export is a premium-only feature. Subscribe or enable enterprise mode to access this.")
     else:
         st.caption("Premium features such as PDF export and darknet detection are unavailable in free mode.")
 

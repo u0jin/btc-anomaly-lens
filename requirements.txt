@@ -6,3 +6,4 @@ requests
 python-dotenv
 networkx
 matplotlib
+reportlab>=3.6.0
