@@ -151,8 +151,13 @@ def main():
             if premium_mode:
                 pdf_bytes = generate_pdf_report(address, total_score, scores_dict).getvalue()
                 b64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
-                href = f'<a href="data:application/pdf;base64,{b64_pdf}" download="BTC_Anomaly_Report.pdf">📄 Download PDF Report</a>'
-                st.markdown(href, unsafe_allow_html=True)
+                st.download_button(
+                    label="📄 Download Full PDF Report",
+                    data=pdf_bytes,
+                    file_name="BTC_Anomaly_Report.pdf",
+                    mime="application/pdf",
+                    help="Download the full anomaly analysis report as a PDF"
+                )
 
             with st.expander("🔍 API Access Info"):
                 source = "mempool.space" if premium_mode else "BlockCypher.com"
