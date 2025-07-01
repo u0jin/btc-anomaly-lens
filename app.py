@@ -14,7 +14,7 @@ from logic.graph import generate_transaction_network
 from api.fetch import get_transaction_data, fetch_fee_histogram
 from api.parser import parse_blockcypher_transactions, parse_mempool_transactions
 from logic.preprocess import preprocess
-from logic.report_generator import generate_pdf_report  # ✅ 추가
+from logic.report_generator import generate_pdf_report
 import base64
 
 # 💎 버튼 스타일 전역 적용
@@ -34,24 +34,51 @@ div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
+# ✅ 헤더 영역 시각적 강조
+st.markdown("""
+<div style='text-align: center; padding: 12px 0;'>
+    <h1 style='color: #08BDBD; font-size: 40px;'>BTC Anomaly Lens</h1>
+    <p style='color: #aaa; font-size: 16px;'>Real-time Bitcoin Threat Intelligence Toolkit ｜ Developed by You Jin Kim</p>
+</div>
+<div style='text-align: center; padding: 10px 0 20px 0; border-bottom: 1px solid #444;'>
+    <h3 style='color: #00E1E1;'>🛡️ Real-Time Bitcoin Threat Intelligence</h3>
+    <p style='color: #ccc; font-size: 15px; max-width: 800px; margin: auto;'>
+        This system simulates field-grade blockchain forensics with real-time anomaly scoring, clustering logic, and interactive reporting. 
+        Designed for analysts, researchers, and security platforms seeking to identify suspicious Bitcoin activity through custom behavioral signals.
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+# ✅ 핵심 기능 소개 - 이모지 제거 + 색상 강조
+with st.expander("🧠 About This Tool"):
+    st.markdown("""
+    <div style='font-size:15px;'>
+    <b style='color:#08BDBD;'>BTC Anomaly Lens</b> is a forensic-grade Bitcoin anomaly detection tool designed for real-time threat simulation. This tool integrates:
+    <ul style='padding-left:1.2em;'>
+        <li><span style='color:#00FFFF;'>Live mempool transaction analysis</span></li>
+        <li><span style='color:#00FFFF;'>Custom anomaly scoring algorithms</span></li>
+        <li><span style='color:#00FFFF;'>Forensic clustering and network visualization</span></li>
+        <li><span style='color:#00FFFF;'>Dynamic fee analysis (Premium Mode)</span></li>
+    </ul>
+    Built with a deep understanding of blockchain structures (UTXO) and cybercrime patterns.
+    </div>
+    """, unsafe_allow_html=True)
+
 def main():
     st.set_page_config(page_title="BTC Anomaly Lens", layout="wide")
     lang = st.sidebar.selectbox("Language / 언어", ["English", "한국어"])
     t = get_text(lang)
 
-    # 🔒 프리미엄 모드 설정
     st.sidebar.markdown("---")
     premium_mode = st.sidebar.checkbox("🔐 Enable Premium Mode", value=False)
     st.sidebar.markdown(t["premium_on"] if premium_mode else t["premium_off"])
 
-    # 사이드 목적 설명
     st.sidebar.markdown("""
     <span style='font-size:13px; color:gray'>
     🔍 Developed for real-world blockchain forensic simulation.
     </span>
     """, unsafe_allow_html=True)
 
-    # 🧑‍💻 개발자 소개
     with st.sidebar.expander(f"🧑‍💻 {t['creator_section']}", expanded=False):
         st.markdown("""
         <div style='line-height: 1.7; font-size: 14px;'>
@@ -71,48 +98,21 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
-    # 🔷 인트로 세트에서 강화
-    st.markdown("""
-    <div style='text-align: center; padding: 10px 0;'>
-        <h2 style='color: #08BDBD;'>BTC Anomaly Lens</h2>
-        <p style='color: #555;'>Real-time Bitcoin Threat Intelligence Toolkit ｜ Developed by You Jin Kim</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    with st.expander("🧠 About This Tool"):
-        st.markdown("""
-        **BTC Anomaly Lens** is a forensic-grade Bitcoin anomaly detection tool designed for real-time threat simulation. This tool integrates:
-
-        - 📡 Live mempool transaction analysis
-        - 🧠 Custom anomaly scoring algorithms
-        - 🕸 Forensic clustering and network visualization
-        - 📊 Dynamic fee analysis (Premium Mode)
-
-        Built with a deep understanding of blockchain structures (UTXO) and cybercrime patterns.
-        """)
-
-    # 🧪 주소 입력
     st.subheader("Live Transaction Analysis")
     address = st.text_input("Enter a Bitcoin address for live analysis")
 
     if st.button("Analyze Address"):
         with st.spinner("Fetching and analyzing transactions..."):
             raw_data = get_transaction_data(address, mode="premium" if premium_mode else "free")
-            tx_list = (
-                parse_mempool_transactions(raw_data)
-                if premium_mode else
-                parse_blockcypher_transactions(raw_data)
-            )
+            tx_list = parse_mempool_transactions(raw_data) if premium_mode else parse_blockcypher_transactions(raw_data)
 
             if not tx_list:
                 st.error("No valid transactions found or address is invalid.")
                 return
 
             tx_list = preprocess(tx_list)
-
             st.success(f"✅ Real blockchain data successfully retrieved via {'mempool.space' if premium_mode else 'BlockCypher'}")
 
-            # 점수 계산
             interval_score, short_intervals = interval_anomaly_score(tx_list)
             amount_score, outliers = amount_anomaly_score(tx_list)
             address_score, flagged_addresses = repeated_address_score(tx_list)
@@ -120,7 +120,6 @@ def main():
             blacklist_flag, blacklist_score_val = blacklist_score(tx_list)
             total_score = interval_score + amount_score + address_score + time_score + blacklist_score_val
 
-            # 점수 보고서 만들기 위해 전달
             scores_dict = {
                 "Short Interval Score": interval_score,
                 "Amount Outlier Score": amount_score,
@@ -129,7 +128,6 @@ def main():
                 "Blacklist Score": blacklist_score_val
             }
 
-            # 🔍 결과 시각화 출력
             show_layout(
                 lang, total_score,
                 interval_score, short_intervals,
@@ -139,37 +137,29 @@ def main():
                 blacklist_score_val, blacklist_flag
             )
 
-            # ⏱ 이상 갈객 시각화
             if abnormal_gaps:
                 df_gaps = pd.DataFrame(abnormal_gaps, columns=["tx_hash", "gap_seconds"])
                 fig_gaps = px.bar(df_gaps, x="tx_hash", y="gap_seconds", title="⏱ Abnormal Time Gaps Detected")
                 st.plotly_chart(fig_gaps, use_container_width=True)
 
-            # 🕸 네트워크 그래프 (프리미엄 전용)
             if premium_mode:
                 encoded_img = generate_transaction_network(tx_list)
                 if encoded_img:
                     with st.expander("🕸 Transaction Flow Network", expanded=False):
                         st.image(f"data:image/png;base64,{encoded_img}", use_column_width=True)
 
-            # 📄 보고서 ëb0b4보기
             if premium_mode:
                 pdf_bytes = generate_pdf_report(address, total_score, scores_dict).getvalue()
                 b64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
                 href = f'<a href="data:application/pdf;base64,{b64_pdf}" download="BTC_Anomaly_Report.pdf">📄 Download PDF Report</a>'
                 st.markdown(href, unsafe_allow_html=True)
 
-            # API 호출 정보
             with st.expander("🔍 API Access Info"):
                 source = "mempool.space" if premium_mode else "BlockCypher.com"
-                endpoint = (
-                    f"GET /address/{address}/txs" if premium_mode
-                    else f"GET /addrs/{address}/full?token=****"
-                )
+                endpoint = f"GET /address/{address}/txs" if premium_mode else f"GET /addrs/{address}/full?token=****"
                 st.markdown(f"**Access Mode:** {'Premium' if premium_mode else 'Free'} (Live API)\n\n**Source:** {source}")
                 st.code(endpoint, language="http")
 
-    # 📊 프리미엄 기능 안내 및 시각화
     if premium_mode:
         st.markdown("### 📊 Premium Features")
         st.info("Advanced clustering visualization and darknet address correlation are under development.")

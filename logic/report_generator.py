@@ -45,7 +45,7 @@ def generate_pdf_report(address, total_score, scores_dict):
     elements.append(Spacer(1, 16))
 
     summary_paragraph = Paragraph(f"<b>Summary:</b> {summary_text}", styles['Normal'])
-    summary_frame = KeepInFrame(450, 60, content=[summary_paragraph], hAlign='LEFT')
+    summary_frame = KeepInFrame(450, 80, content=[summary_paragraph], hAlign='LEFT')
     summary_table = Table([[summary_frame]], colWidths=[450])
     summary_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#fff4ce')),
