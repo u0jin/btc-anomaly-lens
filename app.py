@@ -49,20 +49,27 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ✅ 핵심 기능 소개 - 이모지 제거 + 색상 강조
+# ✅ 핵심 기능 소개 - 실무자 설득력 강화 + 백서 연결
 with st.expander("🧠 About This Tool"):
     st.markdown("""
     <div style='font-size:15px;'>
-    <b style='color:#08BDBD;'>BTC Anomaly Lens</b> is a forensic-grade Bitcoin anomaly detection tool designed for real-time threat simulation. This tool integrates:
+    <b style='color:#08BDBD;'>BTC Anomaly Lens</b> is a forensic-grade Bitcoin anomaly detection platform designed for practical use in threat intelligence and cybercrime investigations.<br><br>
+    
+    <b style='color:#00FFFF;'>Core Capabilities:</b>
     <ul style='padding-left:1.2em;'>
-        <li><span style='color:#00FFFF;'>Live mempool transaction analysis</span></li>
-        <li><span style='color:#00FFFF;'>Custom anomaly scoring algorithms</span></li>
-        <li><span style='color:#00FFFF;'>Forensic clustering and network visualization</span></li>
-        <li><span style='color:#00FFFF;'>Dynamic fee analysis (Premium Mode)</span></li>
+        <li><b>Live mempool transaction parsing:</b> Fetches and analyzes unconfirmed Bitcoin transactions in real-time</li>
+        <li><b>Custom anomaly scoring engine:</b> Flags abnormal patterns across time intervals, amounts, address reuse, and blacklist hits</li>
+        <li><b>Clustering & network visualization:</b> Detects behaviorally linked addresses and renders interaction graphs</li>
+        <li><b>Dynamic fee insight (Premium Mode):</b> Monitors mempool fee structures to identify atypical urgency or obfuscation tactics</li>
+        <li><b>PDF reporting system:</b> Converts findings into clean, analyst-ready reports with score breakdowns and graphs</li>
     </ul>
-    Built with a deep understanding of blockchain structures (UTXO) and cybercrime patterns.
+
+    <p>This tool was developed by a blockchain security researcher with strong UTXO modeling experience and academic background in cybercrime detection.</p>
+
+    🔗 <a href='https://github.com/u0jin/btc-anomaly-lens/blob/main/WHITEPAPER.md' target='_blank'><b>📘 View Full Whitepaper</b></a>
     </div>
     """, unsafe_allow_html=True)
+
 
 def main():
     st.set_page_config(page_title="BTC Anomaly Lens", layout="wide")
