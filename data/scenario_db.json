@@ -1,0 +1,47 @@
+[
+    {
+      "id": "RSMW-2024-ClusterA",
+      "actor": "Ransomware Campaign A",
+      "description": "Irregular high-value spikes with short gaps and multiple output dispersions. High-speed post-incident laundering flow.",
+      "pattern": {
+        "tx_count_min": 5,
+        "avg_interval_max": 90,
+        "reused_address_ratio_min": 0.2,
+        "high_fee_flag": true
+      }
+    },
+    {
+      "id": "SEXT-2023-PatternB",
+      "actor": "Sextortion Mass Targeting",
+      "description": "Low-frequency transactions with sudden spikes; many small amounts to same input in short time window.",
+      "pattern": {
+        "tx_count_min": 4,
+        "avg_interval_max": 300,
+        "reused_address_ratio_min": 0.5,
+        "high_fee_flag": false
+      }
+    },
+    {
+      "id": "BMSC-2024-VolatileScam",
+      "actor": "Blackmail Scam Group",
+      "description": "Highly volatile flow with frequent bursts followed by idle periods. Dynamic fee usage and multi-wallet flow to obfuscate trace.",
+      "pattern": {
+        "tx_count_min": 6,
+        "avg_interval_max": 600,
+        "reused_address_ratio_min": 0.1,
+        "high_fee_flag": false
+      }
+    },
+    {
+      "id": "TMBL-2023-MixerBotX",
+      "actor": "Bitcoin Tumbler Service",
+      "description": "Stable high-frequency base rate with extreme periodic spikes. Very regular time rhythm with zero IQR.",
+      "pattern": {
+        "tx_count_min": 10,
+        "avg_interval_max": 100,
+        "reused_address_ratio_min": 0.3,
+        "high_fee_flag": false
+      }
+    }
+  ]
+  

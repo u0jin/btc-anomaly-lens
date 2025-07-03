@@ -1,0 +1,68 @@
+[
+  {
+    "id": "BITCOINTUMBLER-AUTO",
+    "actor": "bitcointumbler",
+    "description": "Auto-generated from blacklist data for bitcointumbler",
+    "pattern": {
+      "tx_count_min": 21,
+      "avg_interval_max": 9999,
+      "reused_address_ratio_min": 0.15,
+      "high_fee_flag": true
+    }
+  },
+  {
+    "id": "BLACKMAILSCAM-AUTO",
+    "actor": "blackmailscam",
+    "description": "Auto-generated from blacklist data for blackmailscam",
+    "pattern": {
+      "tx_count_min": 20,
+      "avg_interval_max": 9999,
+      "reused_address_ratio_min": 0.13,
+      "high_fee_flag": true
+    }
+  },
+  {
+    "id": "DARKNETMARKET-AUTO",
+    "actor": "darknetmarket",
+    "description": "Auto-generated from blacklist data for darknetmarket",
+    "pattern": {
+      "tx_count_min": 16,
+      "avg_interval_max": 9999,
+      "reused_address_ratio_min": 0.26,
+      "high_fee_flag": true
+    }
+  },
+  {
+    "id": "OTHER-AUTO",
+    "actor": "other",
+    "description": "Auto-generated from blacklist data for other",
+    "pattern": {
+      "tx_count_min": 20,
+      "avg_interval_max": 9999,
+      "reused_address_ratio_min": 0.1,
+      "high_fee_flag": true
+    }
+  },
+  {
+    "id": "RANSOMWARE-AUTO",
+    "actor": "ransomware",
+    "description": "Auto-generated from blacklist data for ransomware",
+    "pattern": {
+      "tx_count_min": 13,
+      "avg_interval_max": 9999,
+      "reused_address_ratio_min": 0.12,
+      "high_fee_flag": true
+    }
+  },
+  {
+    "id": "SEXTORTION-AUTO",
+    "actor": "sextortion",
+    "description": "Auto-generated from blacklist data for sextortion",
+    "pattern": {
+      "tx_count_min": 14,
+      "avg_interval_max": 9999,
+      "reused_address_ratio_min": 0.21,
+      "high_fee_flag": true
+    }
+  }
+]
