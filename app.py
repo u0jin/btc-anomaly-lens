@@ -17,6 +17,8 @@ from logic.preprocess import preprocess
 from logic.report_generator import generate_pdf_report
 from logic.scenario_matcher import load_scenarios, match_scenarios
 import base64
+import streamlit as st
+import os
 
 # 💎 버튼 스타일 전역 적용
 st.markdown("""
@@ -70,8 +72,16 @@ with st.expander("🧠 About This Tool"):
     🔗 <a href='https://github.com/u0jin/btc-anomaly-lens/blob/main/WHITEPAPER.md' target='_blank'><b>📘 View Full Whitepaper</b></a>
     </div>
     """, unsafe_allow_html=True)
+def restore_file_from_secret(secret_key, output_path):
+    if secret_key in st.secrets["files"]:
+        content = base64.b64decode(st.secrets["files"][secret_key])
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, "wb") as f:
+            f.write(content)
 
 def main():
+    restore_file_from_secret("scenario_db", "data/scenario_db.json")
+
     st.set_page_config(page_title="BTC Anomaly Lens", layout="wide")
     lang = st.sidebar.selectbox("Language / 언어", ["English", "한국어"])
     t = get_text(lang)
