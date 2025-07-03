@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from ui.layout import show_layout, render_interval_chart
+from ui.layout import show_layout
 from ui.language import get_text
 from logic.detection import (
     interval_anomaly_score,
@@ -15,6 +15,7 @@ from api.fetch import get_transaction_data, fetch_fee_histogram
 from api.parser import parse_blockcypher_transactions, parse_mempool_transactions
 from logic.preprocess import preprocess
 from logic.report_generator import generate_pdf_report
+from logic.scenario_matcher import load_scenarios, match_scenarios
 import base64
 
 # 💎 버튼 스타일 전역 적용
@@ -49,7 +50,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ✅ 핵심 기능 소개 - 실무자 설득력 강화 + 백서 연결
+# ✅ About This Tool
 with st.expander("🧠 About This Tool"):
     st.markdown("""
     <div style='font-size:15px;'>
@@ -70,7 +71,6 @@ with st.expander("🧠 About This Tool"):
     </div>
     """, unsafe_allow_html=True)
 
-
 def main():
     st.set_page_config(page_title="BTC Anomaly Lens", layout="wide")
     lang = st.sidebar.selectbox("Language / 언어", ["English", "한국어"])
@@ -78,6 +78,16 @@ def main():
 
     st.sidebar.markdown("---")
     premium_mode = st.sidebar.checkbox("🔐 Enable Premium Mode", value=False)
+    # 🔧 Scenario Matching Threshold 추가
+    min_similarity = st.sidebar.slider(
+        "🧠 Scenario Matching Threshold (%)",
+        min_value=0,
+        max_value=100,
+        value=50,
+        step=10,
+        help="Set the minimum similarity (%) required to match with a known scenario"
+    )
+
     st.sidebar.markdown(t["premium_on"] if premium_mode else t["premium_off"])
 
     st.sidebar.markdown("""
@@ -99,11 +109,12 @@ def main():
         🛠 <strong>Technical Stack:</strong><br>
         Python, SQL, REST APIs, WebRTC, Git, Linux<br>
         Blockchain analysis, Static code analysis, Web security<br><br>
-        📄 <a href='https://github.com/u0jin/btc-anomaly-lens/blob/main/docs/%F0%9F%93%84%20You%20Jin%20Kim%20%E2%80%94%20Resume.pdf' target='_blank'>View Resume (PDF)</a><br>
+        📄 <a href='https://github.com/u0jin/btc-anomaly-lens/blob/main/docs/📄%20You%20Jin%20Kim%20%E2%80%94%20Resume.pdf' target='_blank'>View Resume (PDF)</a><br>
         🔗 <a href='https://github.com/u0jin' target='_blank'>GitHub Profile</a><br>
         📧 yujin5836@gmail.com
         </div>
         """, unsafe_allow_html=True)
+    
 
     st.subheader("Live Transaction Analysis")
     address = st.text_input("Enter a Bitcoin address for live analysis")
@@ -144,20 +155,54 @@ def main():
                 blacklist_score_val, blacklist_flag
             )
 
-            if abnormal_gaps:
-                df_gaps = pd.DataFrame(abnormal_gaps, columns=["tx_hash", "gap_seconds"])
-                fig_gaps = px.bar(df_gaps, x="tx_hash", y="gap_seconds", title="⏱ Abnormal Time Gaps Detected")
-                st.plotly_chart(fig_gaps, use_container_width=True)
+            if premium_mode:
+                scenario_db = load_scenarios()
+                tx_stats = {
+                    "tx_count": len(tx_list),
+                    "avg_interval": sum(short_intervals)/len(short_intervals) if short_intervals else 9999,
+                    "reused_address_ratio": len(flagged_addresses) / len(tx_list) if tx_list else 0,
+                    "high_fee_flag": any(tx.get("fee", 0) > 500 for tx in tx_list)
+                }
+                scenario_matches = match_scenarios(tx_stats, scenario_db)
+
+
+                with st.expander("🧠 Scenario Similarity Detection", expanded=True):
+                    if scenario_matches:
+                        st.markdown("<h5 style='color:#08BDBD;'>🔗 Top Matched Scenarios</h5>", unsafe_allow_html=True)
+                        df_match = pd.DataFrame(scenario_matches[:3])
+                        fig_sim = px.bar(df_match, x="actor", y="similarity", color="actor", text="similarity",
+                                         title="Similarity Scores of Matched Scenarios")
+                        st.plotly_chart(fig_sim, use_container_width=True)
+
+                        for match in scenario_matches[:3]:
+                            pattern = match.get('pattern', {})  # 이 줄 추가
+                            st.markdown(f"""
+                            <div style='padding: 10px; border: 1px solid #444; border-radius: 8px; margin-bottom: 10px; font-size:14px;'>
+                            <b>ID:</b> {match['id']}<br>
+                            <b>Actor:</b> <span style='color:#FFA07A'>{match['actor']}</span><br>
+                            <b>Similarity:</b> <span style='color:#00CED1'>{match['similarity']}%</span><br>
+                            <b>Description:</b> {match['description']}<br><br>
+                            <b style='color:#00E1E1;'>🔍 Pattern Justification</b><br>
+                            {"• <b>tx_count ≥ {}</b> → High volume suggests automation<br>".format(pattern['tx_count_min']) if 'tx_count_min' in pattern else ''}
+                            {"• <b>avg_interval ≤ {}s</b> → Indicates rapid succession (likely scripts)<br>".format(pattern['avg_interval_max']) if 'avg_interval_max' in pattern else ''}
+                            {"• <b>reused_address_ratio ≥ {}</b> → Clustered control signal<br>".format(pattern['reused_address_ratio_min']) if 'reused_address_ratio_min' in pattern else ''}
+                            {"• <b>high_fee_flag = {}</b> → May indicate urgency or obfuscation<br>".format(pattern['high_fee_flag']) if 'high_fee_flag' in pattern else ''}
+                            </div>
+                            """, unsafe_allow_html=True)
+
+                    else:
+                        st.info("No matching attack scenarios were detected for this transaction pattern.")
 
             if premium_mode:
                 encoded_img = generate_transaction_network(tx_list)
                 if encoded_img:
-                    with st.expander("🕸 Transaction Flow Network", expanded=False):
+                    with st.expander("🔸 Transaction Flow Network", expanded=False):
                         st.image(f"data:image/png;base64,{encoded_img}", use_column_width=True)
 
             if premium_mode:
-                pdf_bytes = generate_pdf_report(address, total_score, scores_dict).getvalue()
-                b64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
+                pdf_io = generate_pdf_report(address, total_score, scores_dict, scenario_matches, similarity_threshold=min_similarity).getvalue()
+
+                pdf_bytes = generate_pdf_report(address, total_score, scores_dict, scenario_matches=scenario_matches, similarity_threshold=min_similarity)
                 st.download_button(
                     label="📄 Download Full PDF Report",
                     data=pdf_bytes,
@@ -166,20 +211,14 @@ def main():
                     help="Download the full anomaly analysis report as a PDF"
                 )
 
-            with st.expander("🔍 API Access Info"):
-                source = "mempool.space" if premium_mode else "BlockCypher.com"
-                endpoint = f"GET /address/{address}/txs" if premium_mode else f"GET /addrs/{address}/full?token=****"
-                st.markdown(f"**Access Mode:** {'Premium' if premium_mode else 'Free'} (Live API)\n\n**Source:** {source}")
-                st.code(endpoint, language="http")
+            if abnormal_gaps:
+                df_gaps = pd.DataFrame(abnormal_gaps, columns=["tx_hash", "gap_seconds"])
+                fig_gaps = px.bar(df_gaps, x="tx_hash", y="gap_seconds", title="⏱ Abnormal Time Gaps Detected")
+                st.plotly_chart(fig_gaps, use_container_width=True)
 
     if premium_mode:
         st.markdown("### 📊 Premium Features")
-        st.info("Advanced clustering visualization and darknet address correlation are under development.")
-        st.markdown("""
-        - Real-time mempool anomaly map (Coming Soon)<br>
-        - Address graph network visualization ✅<br>
-        - Dynamic fee risk estimation (Coming Soon)
-        """, unsafe_allow_html=True)
+        
 
         with st.expander("💸 Fee Rate Distribution (mempool.space)", expanded=False):
             fee_data = fetch_fee_histogram()
