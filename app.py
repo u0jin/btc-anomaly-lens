@@ -166,7 +166,7 @@ def main():
                     "reused_address_ratio": len(flagged_addresses) / len(tx_list) if tx_list else 0,
                     "high_fee_flag": any(tx.get("fee", 0) > 500 for tx in tx_list)
                 }
-                scenario_matches = match_scenarios(tx_stats, scenario_db)
+                scenario_matches = match_scenarios(tx_stats, scenario_db, min_similarity=min_similarity)
 
 
                 with st.expander("🧠 Scenario Similarity Detection", expanded=True):

@@ -4,8 +4,8 @@ import pandas as pd
 import os
 
 # 파일 경로 설정
-input_path = "data/selected_addresses.csv"  # 너가 사용 중인 파일
-output_path = "data/100_blacklist_grouped_txmeta.csv"
+input_path = "/Users/yujin/Desktop/BitcoinTrace/lens/btc-anomaly-lens/data/selected_addresses.csv"  # 너가 사용 중인 파일
+output_path = "/Users/yujin/Desktop/BitcoinTrace/lens/btc-anomaly-lens/data/100add_blacklist_grouped_txmeta.csv"
 
 # 이미 저장된 결과 불러오기 (중복 방지용)
 if os.path.exists(output_path):

@@ -1,7 +1,7 @@
 import json
 import os
 
-def load_scenarios(path="data/10_scenario_db_from_blacklist.json"):
+def load_scenarios(path="data/100_scenario_db_from_blacklist.json"):
     if not os.path.exists(path):
         return []
     try:
