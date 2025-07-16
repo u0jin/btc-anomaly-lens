@@ -172,7 +172,38 @@ def get_text(lang):
             "exchange_pattern_entropy": "엔트로피",
             "exchange_pattern_amount": "금액 패턴",
             "exchange_pattern_time": "시간 패턴",
-            "exchange_pattern_address": "주소 패턴"
+            "exchange_pattern_address": "주소 패턴",
+            
+            # 네트워크 시각화 관련
+            "network_visualization": "네트워크 시각화",
+            "max_hops_setting": "최대 Hop 수 설정",
+            "max_hops_help": "네트워크 시각화에서 표시할 최대 연결 단계 수 (1-10)",
+            "max_nodes_setting": "표시할 최대 노드 수",
+            "max_nodes_help": "네트워크에서 표시할 최대 노드 수",
+            "network_stats": "네트워크 통계",
+            "total_nodes": "총 노드 수",
+            "total_edges": "총 연결 수",
+            "unique_recipients": "고유 수신 주소",
+            "total_volume": "총 거래량",
+            "network_visualization_title": "트랜잭션 네트워크 시각화",
+            "network_visualization_help": "네트워크 시각화는 최대 {max_hops} hop, 상위 {top_nodes}개 노드를 표시합니다.",
+            "network_visualization_error": "네트워크 시각화를 생성할 수 없습니다.",
+            "network_settings": "네트워크 시각화 설정",
+            "save_settings": "설정 저장",
+            "settings_saved": "네트워크 설정이 저장되었습니다!",
+            "reset_settings": "기본값으로 초기화",
+            "saved_settings": "저장된 설정",
+            "current_settings": "현재 설정",
+            "not_saved": "저장되지 않음",
+            
+            # 시나리오 매칭 설정
+            "scenario_matching_settings": "시나리오 매칭 설정",
+            "matching_threshold": "매칭 임계값 (%)",
+            "matching_threshold_help": "알려진 시나리오와 매칭하기 위한 최소 유사도 (%)",
+            "save_scenario_settings": "저장",
+            "reset_scenario_settings": "초기화",
+            "scenario_settings_saved": "시나리오 설정 저장됨!",
+            "scenario_settings_reset": "시나리오 설정 초기화됨"
         }
     else:
         return {
@@ -346,5 +377,36 @@ def get_text(lang):
             "exchange_pattern_entropy": "Entropy",
             "exchange_pattern_amount": "Amount Patterns",
             "exchange_pattern_time": "Time Patterns",
-            "exchange_pattern_address": "Address Patterns"
+            "exchange_pattern_address": "Address Patterns",
+            
+            # Network Visualization
+            "network_visualization": "Network Visualization",
+            "max_hops_setting": "Max Hops Setting",
+            "max_hops_help": "Maximum connection steps to display in network visualization (1-10)",
+            "max_nodes_setting": "Max Nodes to Display",
+            "max_nodes_help": "Maximum number of nodes to display in network",
+            "network_stats": "Network Statistics",
+            "total_nodes": "Total Nodes",
+            "total_edges": "Total Edges",
+            "unique_recipients": "Unique Recipients",
+            "total_volume": "Total Volume",
+            "network_visualization_title": "Transaction Network Visualization",
+            "network_visualization_help": "Network visualization shows max {max_hops} hops, top {top_nodes} nodes.",
+            "network_visualization_error": "Unable to generate network visualization.",
+            "network_settings": "Network Visualization Settings",
+            "save_settings": "Save Settings",
+            "settings_saved": "Network settings saved successfully!",
+            "reset_settings": "Reset to Default",
+            "saved_settings": "Saved Settings",
+            "current_settings": "Current Settings",
+            "not_saved": "Not Saved",
+            
+            # Scenario Matching Settings
+            "scenario_matching_settings": "Scenario Matching Settings",
+            "matching_threshold": "Matching Threshold (%)",
+            "matching_threshold_help": "Minimum similarity (%) required to match with a known scenario",
+            "save_scenario_settings": "Save",
+            "reset_scenario_settings": "Reset",
+            "scenario_settings_saved": "Scenario settings saved!",
+            "scenario_settings_reset": "Scenario settings reset"
         }
