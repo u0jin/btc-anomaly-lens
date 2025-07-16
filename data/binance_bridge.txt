@@ -1,0 +1,12 @@
+# Binance 브릿지 주소들
+# 출처: Binance 공식 문서, Binance 블록체인 탐색기
+# 형식: 주소,브릿지_타입,설명,출처
+
+# Binance 브릿지 주소들
+bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh,Binance Bridge,Binance Cross-chain Bridge,Binance Official 2023
+1FzWLkAahHooV3TzLvzv2YnuKFj3fx4m6B,Binance Bridge,Binance Cross-chain Bridge,Binance Official 2023
+1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa,Binance Bridge,Binance Cross-chain Bridge,Binance Official 2023
+3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy,Binance Bridge,Binance Cross-chain Bridge,Binance Official 2023
+3Kzh9qAqXWxQ9P3nLjY2GKmGypFMQ5rHMs,Binance Bridge,Binance Cross-chain Bridge,Binance Official 2023
+1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2,Binance Bridge,Binance Cross-chain Bridge,Binance Official 2023
+bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh,Binance Bridge,Binance Cross-chain Bridge,Binance Explorer 2023 

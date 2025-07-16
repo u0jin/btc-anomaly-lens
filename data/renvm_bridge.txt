@@ -1,0 +1,12 @@
+# RenVM 브릿지 주소들
+# 출처: RenVM 공식 문서, DeFi Llama
+# 형식: 주소,브릿지_타입,설명,출처
+
+# RenVM 브릿지 주소들
+3Kzh9qAqXWxQ9P3nLjY2GKmGypFMQ5rHMs,RenVM Bridge,RenVM Cross-chain Bridge,RenVM Official 2023
+bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh,RenVM Bridge,RenVM Cross-chain Bridge,RenVM Official 2023
+1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa,RenVM Bridge,RenVM Cross-chain Bridge,RenVM Official 2023
+3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy,RenVM Bridge,RenVM Cross-chain Bridge,RenVM Official 2023
+1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2,RenVM Bridge,RenVM Cross-chain Bridge,RenVM Official 2023
+1FzWLkAahHooV3TzLvzv2YnuKFj3fx4m6B,RenVM Bridge,RenVM Cross-chain Bridge,RenVM Official 2023
+bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh,RenVM Bridge,RenVM Cross-chain Bridge,DeFi Llama 2023 

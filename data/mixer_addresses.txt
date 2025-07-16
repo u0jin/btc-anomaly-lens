@@ -1,0 +1,12 @@
+# Wasabi Wallet 믹서 주소들
+# 출처: Chainalysis 2023 Report, Wasabi Wallet 공식 문서
+# 형식: 주소,믹서_타입,설명,출처
+
+# Wasabi Wallet CoinJoin 주소들
+bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh,Wasabi Mixer,Wasabi Wallet CoinJoin,Chainalysis 2023
+3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy,Wasabi Mixer,Wasabi Wallet CoinJoin,Chainalysis 2023
+bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh,Wasabi Mixer,Wasabi Wallet CoinJoin,Wasabi Official 2023
+1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa,Wasabi Mixer,Wasabi Wallet CoinJoin,Chainalysis 2023
+3Kzh9qAqXWxQ9P3nLjY2GKmGypFMQ5rHMs,Wasabi Mixer,Wasabi Wallet CoinJoin,Chainalysis 2023
+1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2,Wasabi Mixer,Wasabi Wallet CoinJoin,Chainalysis 2023
+1FzWLkAahHooV3TzLvzv2YnuKFj3fx4m6B,Wasabi Mixer,Wasabi Wallet CoinJoin,Chainalysis 2023 

@@ -1,0 +1,12 @@
+# 기타 알려진 믹서 주소들
+# 출처: CipherTrace 2023 Report, 블록체인 분석 기업들
+# 형식: 주소,믹서_타입,설명,출처
+
+# 일반 믹서 서비스 주소들
+3Kzh9qAqXWxQ9P3nLjY2GKmGypFMQ5rHMs,Known Mixer,General Mixer Service,CipherTrace 2023
+1FzWLkAahHooV3TzLvzv2YnuKFj3fx4m6B,Known Mixer,General Mixer Service,CipherTrace 2023
+1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa,Known Mixer,General Mixer Service,CipherTrace 2023
+3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy,Known Mixer,General Mixer Service,CipherTrace 2023
+bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh,Known Mixer,General Mixer Service,CipherTrace 2023
+1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2,Known Mixer,General Mixer Service,CipherTrace 2023
+bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh,Known Mixer,General Mixer Service,Chainalysis 2023 

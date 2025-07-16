@@ -8,17 +8,22 @@ from logic.detection import (
     amount_anomaly_score,
     repeated_address_score,
     time_gap_anomaly_score,
-    blacklist_score
+    blacklist_score,
+    mixer_detection_score,
+    cross_chain_detection_score,
+    money_laundering_risk_score,
+    exchange_detection_score
 )
 from logic.graph import generate_transaction_network
-from api.fetch import get_transaction_data, fetch_fee_histogram
-from api.parser import parse_blockcypher_transactions, parse_mempool_transactions
+from api.fetch import get_transaction_data
+from api.parser import parse_mempool_transactions
 from logic.preprocess import preprocess
 from logic.report_generator import generate_pdf_report
 from logic.scenario_matcher import load_scenarios, match_scenarios
 import base64
 import streamlit as st
 import os
+from logic.exchange_identifier import identify_exchange_comprehensive
 
 # 💎 버튼 스타일 전역 적용
 st.markdown("""
@@ -123,30 +128,169 @@ def main():
     address = st.text_input("Enter a Bitcoin address for live analysis")
 
     if st.button("Analyze Address"):
+        # 주소 정규화 (앞뒤 공백 제거)
+        address = address.strip() if address else ""
+        
+        if not address:
+            st.warning("비트코인 주소를 입력해주세요.")
+            return
+            
         with st.spinner("Fetching and analyzing transactions..."):
-            raw_data = get_transaction_data(address, mode="premium" if premium_mode else "free")
-            tx_list = parse_mempool_transactions(raw_data) if premium_mode else parse_blockcypher_transactions(raw_data)
+            # 거래소 식별 먼저 실행 (트랜잭션 없어도 주소만으로 결과 반환)
+            exchange_result = identify_exchange_comprehensive(address)
+            final_result = exchange_result.get('final_result', {})
+            description = final_result.get('description', '')
+            method = final_result.get('method', '')
+            
+            # 🏦 거래소 인식 결과 - 깔끔하게 정리
+            st.markdown("---")
+            st.markdown("### 🏦 거래소 인식 결과")
+            
+            if final_result.get('exchange'):
+                exchange = final_result.get('exchange')
+                confidence = final_result.get('confidence', '')
+                
+                # 신뢰도에 따른 색상 결정
+                if confidence == 'very_high':
+                    color = "#00BFAE"
+                    confidence_text = "매우 높음"
+                elif confidence == 'high':
+                    color = "#00CED1"
+                    confidence_text = "높음"
+                elif confidence == 'medium':
+                    color = "#FFD700"
+                    confidence_text = "보통"
+                else:
+                    color = "#FFA07A"
+                    confidence_text = "낮음"
+                
+                st.markdown(f"""
+                <div style='border: 2px solid {color}; border-radius: 12px; background: {color}22; padding: 20px; margin: 10px 0;'>
+                    <div style='display: flex; align-items: center; gap: 15px;'>
+                        <div style='font-size: 36px;'>🏦</div>
+                        <div>
+                            <div style='font-size: 24px; font-weight: bold; color: {color}; margin-bottom: 8px;'>
+                                {exchange}
+                            </div>
+                            <div style='font-size: 16px; color: #666; margin-bottom: 8px;'>
+                                신뢰도: <span style='color: {color}; font-weight: bold;'>{confidence_text}</span>
+                            </div>
+                            <div style='font-size: 14px; color: #888;'>
+                                {description}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # 분석 방법 표시
+                if method:
+                    method_names = {
+                        'official_address': '공식 주소 매칭',
+                        'external_label': '외부 라벨링',
+                        'cluster_analysis': '클러스터링 분석',
+                        'pattern_analysis': '패턴 분석',
+                        'address_pattern': '주소 패턴',
+                        'address_format_check': '주소 형식 확인'
+                    }
+                    st.caption(f"🔍 **분석 방법:** {method_names.get(method, method)}")
+                    
+            else:
+                confidence = final_result.get('confidence', '')
+                if confidence == 'genesis_block':
+                    st.markdown("""
+                    <div style='border: 2px solid #FFD700; border-radius: 12px; background: #FFD70022; padding: 20px; margin: 10px 0;'>
+                        <div style='display: flex; align-items: center; gap: 15px;'>
+                            <div style='font-size: 36px;'>🏛️</div>
+                            <div>
+                                <div style='font-size: 24px; font-weight: bold; color: #FFD700; margin-bottom: 8px;'>
+                                    Genesis 블록 주소
+                                </div>
+                                <div style='font-size: 16px; color: #666;'>
+                                    비트코인 최초 블록 (사토시 나카모토의 지갑)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                elif confidence == 'valid_btc_address':
+                    st.info("✅ 유효한 비트코인 주소 (거래소 주소가 아닐 가능성이 높습니다)")
+                elif confidence == 'invalid_address':
+                    st.error("❌ 비트코인 주소 형식이 아닙니다")
+                else:
+                    st.warning("❓ 알 수 없는 주소")
+
+            # 🔎 View Logic 버튼/expander로 상세 근거 및 출처 표시
+            with st.expander("🔎 View Logic (근거/출처/로직 상세 보기)"):
+                st.markdown("""
+                <div style='font-size:15px; color:#08BDBD; font-weight:600;'>
+                📚 <b>거래소 인식 근거 및 출처</b>
+                </div>
+                """, unsafe_allow_html=True)
+                # 공식 DB/하드코딩 매칭
+                official = exchange_result.get('official_address', {})
+                if official.get('found'):
+                    st.markdown(f"- <b>공식 DB/하드코딩 매칭</b>: <span style='color:#00BFAE'>{official.get('exchange','')}</span> (출처: {official.get('source','')})", unsafe_allow_html=True)
+                # 외부 공개 DB
+                public_db = exchange_result.get('public_db', {})
+                if public_db.get('found'):
+                    tags = ', '.join(public_db.get('exchanges', []))
+                    sources = ', '.join(public_db.get('sources', []))
+                    st.markdown(f"- <b>외부 공개 DB</b>: <span style='color:#00BFAE'>{tags}</span> (출처: {sources})", unsafe_allow_html=True)
+                    # Blockchair 등 외부 링크 제공 (BlockCypher 링크는 제공하지 않음)
+                    if 'Blockchair' in sources:
+                        st.markdown(f"  - [Blockchair에서 주소 확인](https://blockchair.com/bitcoin/address/{address})")
+                # 패턴 분석
+                pattern = exchange_result.get('pattern_analysis', {})
+                if pattern:
+                    st.markdown(f"- <b>패턴 분석</b>: 신뢰도 <span style='color:#00BFAE'>{pattern.get('confidence','')}</span>, 점수: {pattern.get('score','')}", unsafe_allow_html=True)
+                    st.markdown(f"  - 주요 패턴: {pattern.get('patterns',{})}")
+                # 클러스터 분석
+                cluster = exchange_result.get('cluster_analysis', {})
+                if cluster:
+                    st.markdown(f"- <b>클러스터 분석</b>: 신뢰도 <span style='color:#00BFAE'>{cluster.get('confidence','')}</span>, 클러스터 수: {len(cluster.get('clusters',[]))}", unsafe_allow_html=True)
+                # 교차 검증
+                cross = exchange_result.get('cross_validation', {})
+                if cross:
+                    st.markdown(f"- <b>교차 검증</b>: 최종 신뢰도 <span style='color:#00BFAE'>{cross.get('final_confidence','')}</span> (score: {cross.get('validation_score','')}/{cross.get('total_methods','')})", unsafe_allow_html=True)
+                # 전체 JSON 보기(디버깅용)
+                with st.expander("🔬 Raw Logic JSON (디버깅용)"):
+                    import json
+                    st.code(json.dumps(exchange_result, ensure_ascii=False, indent=2))
+            
+            # 트랜잭션 데이터 가져오기
+            raw_data = get_transaction_data(address, mode="premium")
+            tx_list = parse_mempool_transactions(raw_data)
 
             if not tx_list:
-                st.error("No valid transactions found or address is invalid.")
+                st.warning("트랜잭션 데이터를 찾을 수 없습니다. (주소는 유효하지만 거래 내역이 없을 수 있습니다)")
                 return
 
             tx_list = preprocess(tx_list)
-            st.success(f"✅ Real blockchain data successfully retrieved via {'mempool.space' if premium_mode else 'BlockCypher'}")
+            st.success(f"✅ Real blockchain data successfully retrieved via mempool.space")
 
             interval_score, short_intervals = interval_anomaly_score(tx_list)
             amount_score, outliers = amount_anomaly_score(tx_list)
             address_score, flagged_addresses = repeated_address_score(tx_list)
             time_score, abnormal_gaps = time_gap_anomaly_score(tx_list)
             blacklist_flag, blacklist_score_val = blacklist_score(tx_list)
-            total_score = interval_score + amount_score + address_score + time_score + blacklist_score_val
+            mixer_score_val, mixer_indicators = mixer_detection_score(tx_list)
+            cross_chain_score_val, cross_chain_indicators = cross_chain_detection_score(tx_list)
+            money_laundering_score_val, laundering_indicators = money_laundering_risk_score(tx_list)
+            total_score = interval_score + amount_score + address_score + time_score + blacklist_score_val + mixer_score_val + cross_chain_score_val + money_laundering_score_val
+
+            # 거래소 탐지 + 패턴 분석 (새로운 종합 식별 시스템으로 대체)
+            exchange_hits, exchange_details, pattern_analysis = exchange_detection_score(tx_list, address)
 
             scores_dict = {
                 "Short Interval Score": interval_score,
                 "Amount Outlier Score": amount_score,
                 "Repeated Address Score": address_score,
                 "Time Gap Score": time_score,
-                "Blacklist Score": blacklist_score_val
+                "Blacklist Score": blacklist_score_val,
+                "Mixer Score": mixer_score_val,
+                "Cross-chain Score": cross_chain_score_val,
+                "Money Laundering Risk Score": money_laundering_score_val
             }
 
             show_layout(
@@ -155,7 +299,11 @@ def main():
                 amount_score, outliers,
                 address_score, flagged_addresses,
                 time_score, abnormal_gaps,
-                blacklist_score_val, blacklist_flag
+                blacklist_score_val, blacklist_flag,
+                mixer_score_val, mixer_indicators,
+                cross_chain_score_val, cross_chain_indicators,
+                money_laundering_score_val, laundering_indicators,
+                exchange_pattern_analysis=pattern_analysis
             )
 
             if premium_mode:
@@ -223,16 +371,7 @@ def main():
         st.markdown("### 📊 Premium Features")
         
 
-        with st.expander("💸 Fee Rate Distribution (mempool.space)", expanded=False):
-            fee_data = fetch_fee_histogram()
-            if fee_data:
-                df_fee = pd.DataFrame(fee_data)
-                df_fee["fee_label"] = df_fee["feeRange"].apply(lambda r: f"{r[0]}-{r[1]} sat/vB")
-                y_col = "nTx" if "nTx" in df_fee.columns else "totalFees"
-                fig_fee = px.bar(df_fee, x="fee_label", y=y_col, title="💸 Fee Rate Distribution in Mempool")
-                st.plotly_chart(fig_fee, use_container_width=True)
-            else:
-                st.warning("❌ Failed to fetch mempool fee histogram.")
+        # (fee histogram expander 및 관련 코드 전체 삭제)
     else:
         st.caption("Premium features such as PDF export and darknet detection are unavailable in free mode.")
 

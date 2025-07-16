@@ -69,7 +69,110 @@ def get_text(lang):
             위험 점수 최대 부여 (기본 10점, 직접 포함 시 100점)
             """,
             "blacklist_flagged": "❗ 제재 주소 탐지됨: 위험",
-            "blacklist_safe": "✅ 제재 주소와의 연결 없음"
+            "blacklist_safe": "✅ 제재 주소와의 연결 없음",
+
+            # 6. 믹서 탐지
+            "mixer_title": " 믹서 탐지",
+            "mixer_logic_md": """
+            **함수명:** `mixer_detection_score(tx_list)`  
+            **정의:** Wasabi, Samourai, JoinMarket 등 믹서 서비스의 특징적 패턴 탐지  
+            **탐지 방법:**
+            - 다중 입력/출력 패턴: 3개 이상 입력/출력 시 +5점 (최대 20점)
+            - 동일 금액 반복: 같은 금액 2회 이상 반복 시 +3점 (최대 15점)
+            - 빠른 연속 트랜잭션: 30초 이내 연속이 50% 이상 시 +10점
+            **점수 기준:** 최대 25점
+            """,
+            "mixer_flagged": "🔍 믹서 사용 의심 패턴 감지됨",
+            "mixer_safe": "✅ 믹서 사용 의심 패턴 없음",
+
+            # 7. 크로스체인 브릿지 탐지
+            "bridge_title": " 크로스체인 브릿지 탐지",
+            "bridge_logic_md": """
+            **함수명:** `cross_chain_detection_score(tx_list)`  
+            **정의:** 크로스체인 브릿지 서비스 사용 패턴 탐지  
+            **탐지 방법:**
+            - 브릿지 주소 매칭: 알려진 브릿지 주소와 매칭 시 +10점 (최대 30점)
+            - 대용량 트랜잭션: 1 BTC 이상 단일 트랜잭션 시 +5점 (최대 20점)
+            - 브릿지 후 분산: 큰 금액 후 작은 금액 분산 패턴 시 +15점
+            **점수 기준:** 최대 30점
+            """,
+            "bridge_flagged": "🌉 크로스체인 브릿지 사용 의심",
+            "bridge_safe": "✅ 크로스체인 브릿지 사용 의심 없음",
+
+            # 8. 세탁 의심도 분석
+            "laundering_title": " 세탁 의심도 분석",
+            "laundering_logic_md": """
+            **함수명:** `money_laundering_risk_score(tx_list)`  
+            **정의:** 믹서와 브릿지 패턴을 통합한 종합 세탁 의심도 평가  
+            **탐지 방법:**
+            - 믹서 점수 + 브릿지 점수 합산
+            - 높은 트랜잭션 볼륨: 10개 이상 시 +10점
+            - 불규칙한 금액 분산: 높은 분산 패턴 시 +15점
+            **점수 기준:** 최대 100점 (높음: 50점 이상, 중간: 30-50점, 낮음: 30점 미만)
+            """,
+            "laundering_high": "🚨 높은 세탁 의심도",
+            "laundering_medium": "⚠️ 중간 세탁 의심도",
+            "laundering_low": "✅ 낮은 세탁 의심도",
+
+            # 차트 관련 텍스트
+            "mixer_chart_title": "믹서 탐지 패턴 분석",
+            "mixer_chart_none": "믹서 탐지 패턴이 없습니다.",
+            "bridge_chart_title": "크로스체인 브릿지 탐지 패턴 분석",
+            "bridge_chart_none": "크로스체인 브릿지 탐지 패턴이 없습니다.",
+            "laundering_chart_title": "세탁 의심도 위험 요소 분포",
+            "laundering_chart_none": "세탁 의심도 지표가 없습니다.",
+            # 거래소 탐지
+            "exchange_detected": "거래소 주소와 연결됨 (입출금):",
+            "exchange_safe": "✅ 거래소와 직접 연결된 내역 없음.",
+            
+            # 거래소 패턴 분석
+            "exchange_pattern_title": " 거래소 패턴 분석",
+            "exchange_pattern_logic_md": """
+            **함수명:** `analyze_exchange_patterns(tx_list)`  
+            **정의:** AI 기반 거래소 패턴 분석으로 엔트로피, 금액 패턴, 시간 패턴을 종합 분석  
+            **분석 방법:**
+            - **엔트로피 분석**: 주소의 정보 이론적 복잡도 계산 (30% 가중치)
+            - **금액 패턴**: 반올림 숫자, 환산 패턴, 대용량 거래 탐지 (20% 가중치)
+            - **시간 패턴**: 시간대별 활동, 정규 간격, 배치 처리 패턴 (20% 가중치)
+            - **주소 패턴**: bc1/SegWit vs 레거시 형식 선호도 (10% 가중치)
+            **신뢰도 기준:** HIGH (70%+), MEDIUM (50-70%), LOW (<50%)
+            """,
+            "exchange_pattern_entropy_logic": """
+            **엔트로피 계산 공식**
+            - 각 주소의 문자 빈도 기반 정보 이론 엔트로피 계산
+            - H = -Σ(p_i * log2(p_i)), p_i: 각 문자 출현 확률
+            - 엔트로피가 높을수록 복잡한 주소 패턴 (SegWit 등)
+            """,
+            "exchange_pattern_amount_logic": """
+            **금액 패턴 분석 기준**
+            - 반올림 숫자: 1000, 10000, 100000 단위 거래
+            - 대용량 거래: 1 BTC(=100,000,000 sat) 이상
+            - KRW 환산: 45,000,000~55,000,000 sat (1 BTC ≈ 5천만원)
+            - USD 환산: 35,000,000~45,000,000 sat (1 BTC ≈ 4만달러)
+            """,
+            "exchange_pattern_time_logic": """
+            **시간 패턴 분석 기준**
+            - 한국 시간대: 9~18시 (KST)
+            - 미국 시간대: 14~23시 (UTC)
+            - 정규 간격: 30~300초(0.5~5분) 간격 반복
+            - 배치 처리: 60초 미만 연속 트랜잭션 비율
+            """,
+            "exchange_pattern_address_logic": """
+            **주소 패턴 분석 기준**
+            - bc1: SegWit 주소 (신규 거래소 선호)
+            - 1/3: 레거시 주소 (구 거래소/한국 거래소 선호)
+            - 다중 출력: 2개 이상 output
+            - 단일 출력: 1개 output
+            """,
+            "exchange_pattern_chart_title": "거래소 유사도 분석",
+            "exchange_pattern_chart_none": "거래소 패턴 분석 결과가 없습니다.",
+            "exchange_pattern_best_match": "🎯 가장 유사한 거래소",
+            "exchange_pattern_similarity": "유사도",
+            "exchange_pattern_confidence": "신뢰도",
+            "exchange_pattern_entropy": "엔트로피",
+            "exchange_pattern_amount": "금액 패턴",
+            "exchange_pattern_time": "시간 패턴",
+            "exchange_pattern_address": "주소 패턴"
         }
     else:
         return {
@@ -140,5 +243,108 @@ def get_text(lang):
             **Scoring:** 10 pts if indirectly linked, 100 pts if directly used
             """,
             "blacklist_flagged": "❗ Blacklisted address detected",
-            "blacklist_safe": "✅ No blacklist matches found"
+            "blacklist_safe": "✅ No blacklist matches found",
+
+            # 6. Mixer Detection
+            "mixer_title": " Mixer Detection",
+            "mixer_logic_md": """
+            **Function:** `mixer_detection_score(tx_list)`  
+            **Definition:** Detects characteristic patterns of mixer services like Wasabi, Samourai, JoinMarket  
+            **Detection Methods:**
+            - Multi I/O Pattern: +5 pts per transaction with >3 inputs/outputs (max 20 pts)
+            - Repeated Amount Pattern: +3 pts per repeated amount ≥2 times (max 15 pts)
+            - Fast Sequential Transactions: +10 pts if >50% intervals <30s
+            **Scoring:** Maximum 25 points
+            """,
+            "mixer_flagged": "🔍 Mixer usage pattern detected",
+            "mixer_safe": "✅ No mixer usage patterns detected",
+
+            # 7. Cross-chain Bridge Detection
+            "bridge_title": " Cross-chain Bridge Detection",
+            "bridge_logic_md": """
+            **Function:** `cross_chain_detection_score(tx_list)`  
+            **Definition:** Detects cross-chain bridge service usage patterns  
+            **Detection Methods:**
+            - Bridge Address Matching: +10 pts per known bridge address (max 30 pts)
+            - Large Transaction: +5 pts per transaction >1 BTC (max 20 pts)
+            - Post-bridge Distribution: +15 pts for large-to-small amount distribution
+            **Scoring:** Maximum 30 points
+            """,
+            "bridge_flagged": "🌉 Cross-chain bridge usage suspected",
+            "bridge_safe": "✅ No cross-chain bridge usage detected",
+
+            # 8. Money Laundering Risk Assessment
+            "laundering_title": " Money Laundering Risk Assessment",
+            "laundering_logic_md": """
+            **Function:** `money_laundering_risk_score(tx_list)`  
+            **Definition:** Comprehensive money laundering risk assessment combining mixer and bridge patterns  
+            **Detection Methods:**
+            - Mixer Score + Bridge Score summation
+            - High Transaction Volume: +10 pts if >10 transactions
+            - Irregular Amount Distribution: +15 pts for high variance patterns
+            **Scoring:** Maximum 100 points (High: ≥50 pts, Medium: 30-50 pts, Low: <30 pts)
+            """,
+            "laundering_high": "🚨 High money laundering risk",
+            "laundering_medium": "⚠️ Medium money laundering risk",
+            "laundering_low": "✅ Low money laundering risk",
+
+            # Chart related text
+            "mixer_chart_title": "Mixer Detection Pattern Analysis",
+            "mixer_chart_none": "No mixer detection patterns found.",
+            "bridge_chart_title": "Cross-chain Bridge Detection Pattern Analysis",
+            "bridge_chart_none": "No cross-chain bridge detection patterns found.",
+            "laundering_chart_title": "Money Laundering Risk Factor Distribution",
+            "laundering_chart_none": "No money laundering risk indicators found.",
+            # 거래소 탐지
+            "exchange_detected": "Linked to Exchange Address (Deposit/Withdrawal):",
+            "exchange_safe": "✅ No direct exchange linkage detected.",
+            
+            # Exchange Pattern Analysis
+            "exchange_pattern_title": " Exchange Pattern Analysis",
+            "exchange_pattern_logic_md": """
+            **Function:** `analyze_exchange_patterns(tx_list)`  
+            **Definition:** AI-based exchange pattern analysis using entropy, amount patterns, and time patterns  
+            **Analysis Methods:**
+            - **Entropy Analysis**: Information theory-based address complexity calculation (30% weight)
+            - **Amount Patterns**: Round numbers, conversion patterns, high-volume transactions (20% weight)
+            - **Time Patterns**: Timezone activity, regular intervals, batch processing (20% weight)
+            - **Address Patterns**: bc1/SegWit vs legacy format preferences (10% weight)
+            **Confidence Levels:** HIGH (70%+), MEDIUM (50-70%), LOW (<50%)
+            """,
+            "exchange_pattern_entropy_logic": """
+            **엔트로피 계산 공식**
+            - 각 주소의 문자 빈도 기반 정보 이론 엔트로피 계산
+            - H = -Σ(p_i * log2(p_i)), p_i: 각 문자 출현 확률
+            - 엔트로피가 높을수록 복잡한 주소 패턴 (SegWit 등)
+            """,
+            "exchange_pattern_amount_logic": """
+            **금액 패턴 분석 기준**
+            - 반올림 숫자: 1000, 10000, 100000 단위 거래
+            - 대용량 거래: 1 BTC(=100,000,000 sat) 이상
+            - KRW 환산: 45,000,000~55,000,000 sat (1 BTC ≈ 5천만원)
+            - USD 환산: 35,000,000~45,000,000 sat (1 BTC ≈ 4만달러)
+            """,
+            "exchange_pattern_time_logic": """
+            **시간 패턴 분석 기준**
+            - 한국 시간대: 9~18시 (KST)
+            - 미국 시간대: 14~23시 (UTC)
+            - 정규 간격: 30~300초(0.5~5분) 간격 반복
+            - 배치 처리: 60초 미만 연속 트랜잭션 비율
+            """,
+            "exchange_pattern_address_logic": """
+            **주소 패턴 분석 기준**
+            - bc1: SegWit 주소 (신규 거래소 선호)
+            - 1/3: 레거시 주소 (구 거래소/한국 거래소 선호)
+            - 다중 출력: 2개 이상 output
+            - 단일 출력: 1개 output
+            """,
+            "exchange_pattern_chart_title": "Exchange Similarity Analysis",
+            "exchange_pattern_chart_none": "No exchange pattern analysis results.",
+            "exchange_pattern_best_match": "🎯 Best Matching Exchange",
+            "exchange_pattern_similarity": "Similarity",
+            "exchange_pattern_confidence": "Confidence",
+            "exchange_pattern_entropy": "Entropy",
+            "exchange_pattern_amount": "Amount Patterns",
+            "exchange_pattern_time": "Time Patterns",
+            "exchange_pattern_address": "Address Patterns"
         }

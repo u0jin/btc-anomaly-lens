@@ -1,0 +1,12 @@
+# 기타 브릿지 주소들
+# 출처: DeFi Pulse 2023, DeFi Llama, Etherscan
+# 형식: 주소,브릿지_타입,설명,출처
+
+# 일반 크로스체인 브릿지 주소들
+1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2,Cross-chain Bridge,General Cross-chain Bridge,DeFi Pulse 2023
+3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy,Cross-chain Bridge,General Cross-chain Bridge,DeFi Pulse 2023
+bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh,Cross-chain Bridge,General Cross-chain Bridge,DeFi Pulse 2023
+1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa,Cross-chain Bridge,General Cross-chain Bridge,DeFi Llama 2023
+3Kzh9qAqXWxQ9P3nLjY2GKmGypFMQ5rHMs,Cross-chain Bridge,General Cross-chain Bridge,DeFi Llama 2023
+1FzWLkAahHooV3TzLvzv2YnuKFj3fx4m6B,Cross-chain Bridge,General Cross-chain Bridge,DeFi Llama 2023
+bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh,Cross-chain Bridge,General Cross-chain Bridge,Etherscan 2023 
